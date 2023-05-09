@@ -1,5 +1,6 @@
 package com.pragma.powerup.usermicroservice.adapters.driving.http.controller;
 
+import com.pragma.powerup.usermicroservice.adapters.driving.http.adapter.RestTemplateAdapter;
 import com.pragma.powerup.usermicroservice.adapters.driving.http.dto.request.RestaurantRequestDto;
 import com.pragma.powerup.usermicroservice.adapters.driving.http.handlers.IRestaurantHandler;
 import com.pragma.powerup.usermicroservice.configuration.Constants;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.Map;
@@ -27,6 +27,8 @@ public class RestaurantRestController {
 
     private final IRestaurantHandler restaurantHandler;
 
+    private final RestTemplateAdapter restTemplateAdapter;
+
     @Operation(summary = "Add a new Restaurant",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Restaurant created",
@@ -37,26 +39,14 @@ public class RestaurantRestController {
     public ResponseEntity<Map<String, String>> saveRestaurant(@Valid @RequestBody RestaurantRequestDto restaurantRequestDto) {
         restaurantHandler.saveRestaurant(restaurantRequestDto);
 
-        RestTemplate restTemplate = new RestTemplate();
+        String role = restTemplateAdapter.getUserRole(restaurantRequestDto.getIdOwner());
 
-        String url = "http://localhost:8090/user/" + restaurantRequestDto.getIdOwner() + "/role";
-
-        ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
-
-        if (response.getStatusCode().is2xxSuccessful()) {
-            Map<String, String> responseData = response.getBody();
-            String role = responseData.get("role");
-
-            if ("ROLE_OWNER".equals(role)) {
-                return ResponseEntity.status(HttpStatus.CREATED)
-                        .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, "Restaurante creado exitosamente"));
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, "El id proporcionado no pertenece a un Porpietario"));
-            }
+        if (role.equals("ROLE_OWNER")) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, "Restaurante creado exitosamente"));
         } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, "Error al obtener el rol "));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, "El id proporcionado no pertenece a un Porpietario"));
         }
     }
 }
