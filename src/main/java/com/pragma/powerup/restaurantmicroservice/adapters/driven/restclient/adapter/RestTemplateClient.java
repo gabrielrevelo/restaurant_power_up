@@ -1,20 +1,20 @@
-package com.pragma.powerup.restaurantmicroservice.adapters.driving.http.adapter;
+package com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.adapter;
 
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.exceptions.UserRoleNotFoundException;
+import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestTemplateClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
-@Component
-public class RestTemplateAdapter {
+public class RestTemplateClient implements IRestTemplateClient {
     @Value("${app.userMicroUrlBase}")
-    private String userRoleUrl;
+    private String userMicroUrlBase;
     RestTemplate restTemplate = new RestTemplate();
+    @Override
     public String getUserRole(String userId) {
-        String url = userRoleUrl + "user/role/" + userId;
+        String url = userMicroUrlBase + "user/role/" + userId;
         ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {

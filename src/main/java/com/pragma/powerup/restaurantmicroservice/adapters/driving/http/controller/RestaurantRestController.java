@@ -1,6 +1,5 @@
 package com.pragma.powerup.restaurantmicroservice.adapters.driving.http.controller;
 
-import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.adapter.RestTemplateAdapter;
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.dto.request.RestaurantRequestDto;
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.handlers.IRestaurantHandler;
 import com.pragma.powerup.restaurantmicroservice.configuration.Constants;
@@ -27,8 +26,6 @@ public class RestaurantRestController {
 
     private final IRestaurantHandler restaurantHandler;
 
-    private final RestTemplateAdapter restTemplateAdapter;
-
     @Operation(summary = "Add a new Restaurant",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Restaurant created",
@@ -37,15 +34,8 @@ public class RestaurantRestController {
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
     @PostMapping()
     public ResponseEntity<Map<String, String>> saveRestaurant(@Valid @RequestBody RestaurantRequestDto restaurantRequestDto) {
-        String role = restTemplateAdapter.getUserRole(restaurantRequestDto.getIdOwner());
-
-        if (role.equals("ROLE_OWNER")) {
-            restaurantHandler.saveRestaurant(restaurantRequestDto);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, "Restaurante creado exitosamente"));
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, "El id proporcionado no pertenece a un Porpietario"));
-        }
+        restaurantHandler.saveRestaurant(restaurantRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, "Restaurante creado exitosamente"));
     }
 }

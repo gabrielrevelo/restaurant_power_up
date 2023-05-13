@@ -1,5 +1,6 @@
 package com.pragma.powerup.restaurantmicroservice.configuration;
 
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -37,6 +38,12 @@ public class ControllerAdvisor {
     public ResponseEntity<Map<String, String>> handleAuthenticationException(AuthenticationException noDataFoundException) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Collections.singletonMap(RESPONSE_ERROR_MESSAGE_KEY, WRONG_CREDENTIALS_MESSAGE));
+    }
+
+    @ExceptionHandler(UserNotOwnerException.class)
+    public ResponseEntity<Map<String, String>> handleUserNotOwnerException(UserNotOwnerException userNotOwnerException) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, INVALID_OWNER_ID_MESSAGE));
     }
 
 }
