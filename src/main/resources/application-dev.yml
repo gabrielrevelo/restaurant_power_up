@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost/poweruplazoleta
+    url: jdbc:mysql://localhost/restaurant_powerup
     username: root
     password: 1234567890
   jpa:
@@ -20,4 +20,4 @@ management:
         include: "*"
 
 app:
-  userMicroUrlBase: "http://localhost:8090/"
+  userMicroUrlBase: "http://localhost:8080/"
