@@ -23,7 +23,7 @@ public class Constants {
     public static final String ROLE_NOT_FOUND_MESSAGE = "No role found with the id provided";
     public static final String ROLE_NOT_ALLOWED_MESSAGE = "No permission granted to create users with this role";
     public static final String USER_ALREADY_EXISTS_MESSAGE = "A user already exists with the role provided";
-    public static final String USER_NOT_FOUND_MESSAGE = "No user found with the role provided";
+    public static final String USER_NOT_FOUND_MESSAGE = "No user found";
     public static final String SWAGGER_TITLE_MESSAGE = "User API Pragma Power Up";
     public static final String SWAGGER_DESCRIPTION_MESSAGE = "User microservice";
     public static final String SWAGGER_VERSION_MESSAGE = "1.0.0";
@@ -32,5 +32,5 @@ public class Constants {
     public static final String SWAGGER_TERMS_OF_SERVICE_MESSAGE = "http://swagger.io/terms/";
     public static final String EMPTY_FIELD_MESSAGE = "The field cannot be empty";
     public static final String INVALID_FORMAT_MESSAGE = "Invalid format";
-    public static final String INVALID_OWNER_ID_MESSAGE = "El id proporcionado no pertenece a un Propietario";
+    public static final String INVALID_OWNER_ID_MESSAGE = "Invalid ID for owner user";
 }

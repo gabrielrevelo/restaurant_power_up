@@ -1,5 +1,6 @@
 package com.pragma.powerup.restaurantmicroservice.configuration;
 
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.exceptions.UserRoleNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,12 @@ public class ControllerAdvisor {
     public ResponseEntity<Map<String, String>> handleUserNotOwnerException(UserNotOwnerException userNotOwnerException) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, INVALID_OWNER_ID_MESSAGE));
+    }
+
+    @ExceptionHandler(UserRoleNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleUserRoleNotFoundException(UserRoleNotFoundException userRoleNotFoundException) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, USER_NOT_FOUND_MESSAGE));
     }
 
 }
