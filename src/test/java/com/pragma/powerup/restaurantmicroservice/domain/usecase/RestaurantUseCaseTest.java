@@ -33,7 +33,7 @@ class RestaurantUseCaseTest {
     void testSaveRestaurant_ValidOwner_SaveSuccessful() {
         // Arrange
         String ownerId = "123";
-        Restaurant restaurant = new Restaurant();
+        Restaurant restaurant = new Restaurant(null, null, null, null, null, null, null);
         restaurant.setIdOwner(ownerId);
 
         when(restTemplateClient.getUserRole(ownerId)).thenReturn("ROLE_OWNER");
@@ -56,8 +56,6 @@ class RestaurantUseCaseTest {
         when(restTemplateClient.getUserRole(ownerId)).thenReturn("ROLE_ADMIN");
 
         // Act & Assert
-        assertThrows(UserNotOwnerException.class, () -> {
-            restaurantUseCase.saveRestaurant(restaurant);
-        });
+        assertThrows(UserNotOwnerException.class, () -> restaurantUseCase.saveRestaurant(restaurant));
     }
 }
