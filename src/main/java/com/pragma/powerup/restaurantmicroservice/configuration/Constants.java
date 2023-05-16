@@ -34,4 +34,5 @@ public class Constants {
     public static final String EMPTY_FIELD_MESSAGE = "The field cannot be empty";
     public static final String INVALID_FORMAT_MESSAGE = "Invalid format";
     public static final String INVALID_OWNER_ID_MESSAGE = "Invalid ID for owner user";
+    public static final String DISH_UPDATED_MESSAGE = "Dish updated successfully";
 }

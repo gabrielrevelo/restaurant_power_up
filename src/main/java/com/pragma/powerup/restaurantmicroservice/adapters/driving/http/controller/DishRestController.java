@@ -1,6 +1,7 @@
 package com.pragma.powerup.restaurantmicroservice.adapters.driving.http.controller;
 
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.dto.request.DishRequestDto;
+import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.dto.request.DishUpdateDto;
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.handlers.IDishHandler;
 import com.pragma.powerup.restaurantmicroservice.configuration.Constants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,5 +36,15 @@ public class DishRestController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, Constants.DISH_CREATED_MESSAGE));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Map<String, String>> updateDish(
+            @PathVariable("id") Long dishId,
+            @Valid @RequestBody DishUpdateDto dishUpdateDto) {
+        dishHandler.updateDish(dishId, dishUpdateDto);
+
+        return ResponseEntity.ok()
+                .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, Constants.DISH_UPDATED_MESSAGE));
     }
 }
