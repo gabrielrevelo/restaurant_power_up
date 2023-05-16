@@ -3,14 +3,14 @@ package com.pragma.powerup.restaurantmicroservice.domain.model;
 public class Dish {
     private Long id;
     private String name;
-    private String category;
+    private Category category;
     private String description;
     private Double price;
     private String idRestaurant;
     private String urlImage;
     private Boolean active;
 
-    public Dish(Long id, String name, String category, String description, Double price, String idRestaurant, String urlImage, Boolean active) {
+    public Dish(Long id, String name, Category category, String description, Double price, String idRestaurant, String urlImage, Boolean active) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -37,11 +37,11 @@ public class Dish {
         this.name = name;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

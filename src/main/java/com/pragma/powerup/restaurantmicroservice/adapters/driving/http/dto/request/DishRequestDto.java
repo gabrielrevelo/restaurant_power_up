@@ -18,9 +18,9 @@ public class DishRequestDto {
     @NotEmpty(message = Constants.EMPTY_FIELD_MESSAGE)
     @Schema(description = "Name", example = "Hamburguesa")
     private String name;
-    @NotEmpty(message = Constants.EMPTY_FIELD_MESSAGE)
-    @Schema(description = "Category", example = "Comida Rápida")
-    private String category;
+    @NotNull(message = Constants.EMPTY_FIELD_MESSAGE)
+    @Schema(description = "Category", example = "1L")
+    private Long category;
     @NotEmpty(message = Constants.EMPTY_FIELD_MESSAGE)
     @Schema(description = "Description", example = "Hamburguesa con queso")
     private String description;

@@ -12,17 +12,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class DishEntity {
+public class CategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "id_category")
-    private CategoryEntity category;
     private String description;
-    private Double price;
-    private String idRestaurant;
-    private String urlImage;
-    private Boolean active;
 }
