@@ -51,7 +51,8 @@ jacocoTestReport {
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect{
 			fileTree(dir: it, exclude: ['com/pragma/powerup/restaurantmicroservice/configuration',
-										'com/pragma/powerup/restaurantmicroservice/adapters'])
+										'com/pragma/powerup/restaurantmicroservice/adapters',
+										'com/pragma/powerup/restaurantmicroservice/domain/model'])
 		}))
 	}
 }
