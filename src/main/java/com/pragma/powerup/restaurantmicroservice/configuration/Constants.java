@@ -12,6 +12,7 @@ public class Constants {
     public static final int MAX_PAGE_SIZE = 2;
     public static final String RESPONSE_MESSAGE_KEY = "message";
     public static final String RESTAURANT_CREATED_MESSAGE = "Restaurant created successfully";
+    public static final String DISH_CREATED_MESSAGE = "Dish created successfully";
     public static final String USER_CREATED_MESSAGE = "User created successfully";
     public static final String USER_DELETED_MESSAGE = "User deleted successfully";
     public static final String RESPONSE_ERROR_MESSAGE_KEY = "error";
@@ -33,4 +34,5 @@ public class Constants {
     public static final String EMPTY_FIELD_MESSAGE = "The field cannot be empty";
     public static final String INVALID_FORMAT_MESSAGE = "Invalid format";
     public static final String INVALID_OWNER_ID_MESSAGE = "Invalid ID for owner user";
+    public static final String DISH_UPDATED_MESSAGE = "Dish updated successfully";
 }
