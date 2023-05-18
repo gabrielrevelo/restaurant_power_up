@@ -1,15 +1,22 @@
 package com.pragma.powerup.restaurantmicroservice.configuration.security.jwt;
 
+import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtProvider {
@@ -51,6 +58,21 @@ public class JwtProvider {
             // Manejar el error de análisis según sea necesario
         }
         return null;
+    }
+
+    @SneakyThrows
+    public List<GrantedAuthority> getAuthorities(String token) {
+        JWT jwt = JWTParser.parse(token);
+        JWTClaimsSet claimsSet = jwt.getJWTClaimsSet();
+        if (claimsSet != null) {
+            List<String> roles = (List<String>) claimsSet.getClaim("roles");
+            if (roles != null) {
+                return roles.stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+            }
+        }
+        return Collections.emptyList();
     }
 
 }
