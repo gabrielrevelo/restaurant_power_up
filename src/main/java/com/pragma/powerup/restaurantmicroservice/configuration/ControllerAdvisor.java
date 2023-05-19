@@ -1,5 +1,6 @@
 package com.pragma.powerup.restaurantmicroservice.configuration;
 
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.exceptions.RestaurantNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.exceptions.UserRoleNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
 import org.springframework.http.HttpStatus;
@@ -43,14 +44,21 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(UserNotOwnerException.class)
     public ResponseEntity<Map<String, String>> handleUserNotOwnerException(UserNotOwnerException userNotOwnerException) {
+        String message = userNotOwnerException.getMessage();
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, INVALID_OWNER_ID_MESSAGE));
+                .body(Collections.singletonMap(RESPONSE_ERROR_MESSAGE_KEY, (message == null) ? INVALID_OWNER_ID_MESSAGE : userNotOwnerException.getMessage()));
     }
 
     @ExceptionHandler(UserRoleNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleUserRoleNotFoundException(UserRoleNotFoundException userRoleNotFoundException) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, USER_NOT_FOUND_MESSAGE));
+    }
+
+    @ExceptionHandler(RestaurantNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleRestaurantNotFoundException(RestaurantNotFoundException restaurantNotFoundException) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Collections.singletonMap(RESPONSE_ERROR_MESSAGE_KEY, RESTAURANT_NOT_FOUND_MESSAGE));
     }
 
 }
