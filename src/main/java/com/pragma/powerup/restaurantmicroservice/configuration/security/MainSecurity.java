@@ -1,5 +1,6 @@
 package com.pragma.powerup.restaurantmicroservice.configuration.security;
 
+import com.pragma.powerup.restaurantmicroservice.configuration.security.exception.CustomAccessDeniedHandler;
 import com.pragma.powerup.restaurantmicroservice.configuration.security.jwt.JwtEntryPoint;
 import com.pragma.powerup.restaurantmicroservice.configuration.security.jwt.JwtTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class MainSecurity {
     @Autowired
     JwtEntryPoint jwtEntryPoint;
 
+    @Autowired
+    private CustomAccessDeniedHandler accessDeniedHandler;
+
     @Bean
     public JwtTokenFilter jwtTokenFilter() {
         return new JwtTokenFilter();
@@ -43,12 +47,15 @@ public class MainSecurity {
         http.cors().and().csrf().disable()
                 .authorizeRequests(requests -> requests
                         .requestMatchers("/auth/login", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health").permitAll()
-                        //.requestMatchers("/user").hasRole("ADMIN")
+                        .requestMatchers("/restaurant/**").hasRole("ADMIN")
+                        .requestMatchers("/dish/**").hasRole("OWNER")
                 )
                 .formLogin().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .exceptionHandling().authenticationEntryPoint(jwtEntryPoint);
+                .exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler)
+                .authenticationEntryPoint(jwtEntryPoint);
         http.addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

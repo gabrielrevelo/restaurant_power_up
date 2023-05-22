@@ -1,24 +1,19 @@
 package com.pragma.powerup.restaurantmicroservice.configuration.security.jwt;
 
-import com.nimbusds.jwt.JWTClaimsSet;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class JwtTokenFilter extends OncePerRequestFilter {
     @Autowired
@@ -32,24 +27,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String token = getToken(req);
         if (token != null && jwtProvider.validateToken(token)) {
-            JWTClaimsSet claimsSet = jwtProvider.getClaims(token);
+            String nombreUsuario = jwtProvider.getNombreUsuarioFromToken(token);
+            List<GrantedAuthority> authorities = jwtProvider.getAuthorities(token);
+            
+            JwtUserDetails userDetails = new JwtUserDetails(nombreUsuario, authorities);
 
-            // Obtener el nombre de usuario y los roles de los claims
-            String nombreUsuario = claimsSet.getSubject();
-            List<String> roles = null;
-            try {
-                roles = claimsSet.getStringListClaim("roles");
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(auth);
 
-            // Crear una instancia de UserDetails con los roles
-            UserDetails userDetails = new User(nombreUsuario, null, roles.stream()
-                    .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList()));
-
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,
-                    userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
         filterChain.doFilter(req, res);

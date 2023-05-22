@@ -1,6 +1,7 @@
 package com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.adapter;
 
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.entity.DishEntity;
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.exceptions.DishNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.mappers.IDishEntityMapper;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.repositories.IDishRepository;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Dish;
@@ -20,8 +21,7 @@ public class DishMysqlAdapter implements IDishPersistencePort {
 
     @Override
     public Dish findById(Long id) {
-        //TODO add exception
-        DishEntity dishEntity = dishRepository.findById(id).orElseThrow();
+        DishEntity dishEntity = dishRepository.findById(id).orElseThrow(DishNotFoundException::new);
         return dishEntityMapper.toDomain(dishEntity);
     }
 }
