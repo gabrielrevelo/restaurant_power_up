@@ -26,6 +26,7 @@ public class Constants {
     public static final String USER_ALREADY_EXISTS_MESSAGE = "A user already exists with the role provided";
     public static final String USER_NOT_FOUND_MESSAGE = "No user found";
     public static final String RESTAURANT_NOT_FOUND_MESSAGE = "No restaurant found";
+    public static final String DISH_NOT_FOUND_MESSAGE = "No dish found";
     public static final String SWAGGER_TITLE_MESSAGE = "Restaurant API Pragma Power Up";
     public static final String SWAGGER_DESCRIPTION_MESSAGE = "User microservice";
     public static final String SWAGGER_VERSION_MESSAGE = "1.0.0";

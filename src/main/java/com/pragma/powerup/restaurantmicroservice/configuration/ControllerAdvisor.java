@@ -1,5 +1,6 @@
 package com.pragma.powerup.restaurantmicroservice.configuration;
 
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.exceptions.DishNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.exceptions.RestaurantNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.exceptions.UserRoleNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
@@ -59,6 +60,12 @@ public class ControllerAdvisor {
     public ResponseEntity<Map<String, String>> handleRestaurantNotFoundException(RestaurantNotFoundException restaurantNotFoundException) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(Collections.singletonMap(RESPONSE_ERROR_MESSAGE_KEY, RESTAURANT_NOT_FOUND_MESSAGE));
+    }
+
+    @ExceptionHandler(DishNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleDishNotFoundException(DishNotFoundException dishNotFoundException) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Collections.singletonMap(RESPONSE_ERROR_MESSAGE_KEY, DISH_NOT_FOUND_MESSAGE));
     }
 
 }

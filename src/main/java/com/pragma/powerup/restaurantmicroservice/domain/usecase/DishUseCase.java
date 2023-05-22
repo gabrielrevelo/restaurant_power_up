@@ -20,19 +20,29 @@ public class DishUseCase implements IDishServicePort {
         this.userServicePort = userServicePort;
     }
 
-    @Override
-    public void saveDish(Dish dish) {
-        String idUser = userServicePort.getCurrentUserId();
-        Restaurant restaurant = restaurantPersistencePort.getRestaurant(dish.getIdRestaurant());
-        if(!restaurant.getIdOwner().equals(idUser)) {
+    private void checkOwnerAuthorization(Long restaurantId) {
+        String userId = userServicePort.getCurrentUserId();
+        Restaurant restaurant = restaurantPersistencePort.getRestaurant(restaurantId);
+        if (!restaurant.getIdOwner().equals(userId)) {
             throw new UserNotOwnerException("User not owner of restaurant");
         }
+    }
+
+    @Override
+    public void saveDish(Dish dish) {
+        checkOwnerAuthorization(dish.getIdRestaurant());
+
         dish.setActive(true);
         dishPersistencePort.saveDish(dish);
     }
 
     @Override
-    public Dish findById(Long id) {
-        return dishPersistencePort.findById(id);
+    public void updateDish(Long id, Double price, String description) {
+        Dish dish = dishPersistencePort.findById(id);
+        checkOwnerAuthorization(dish.getIdRestaurant());
+
+        dish.setPrice(price);
+        dish.setDescription(description);
+        dishPersistencePort.saveDish(dish);
     }
 }

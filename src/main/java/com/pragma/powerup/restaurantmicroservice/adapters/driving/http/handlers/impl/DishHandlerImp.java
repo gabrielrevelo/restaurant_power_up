@@ -5,7 +5,6 @@ import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.dto.reque
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.handlers.IDishHandler;
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.mapper.IDishMapper;
 import com.pragma.powerup.restaurantmicroservice.domain.api.IDishServicePort;
-import com.pragma.powerup.restaurantmicroservice.domain.model.Dish;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +22,7 @@ public class DishHandlerImp implements IDishHandler {
 
     @Override
     public void updateDish(Long id, DishUpdateDto dishUpdateDto) {
-        Dish existingDish = dishServicePort.findById(id);
-        dishRequestMapper.updateDishFromDto(dishUpdateDto, existingDish);
-        dishServicePort.saveDish(existingDish);
+        dishServicePort.updateDish(id, dishUpdateDto.getPrice(), dishUpdateDto.getDescription());
     }
 
 }
