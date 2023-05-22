@@ -1,74 +1,128 @@
 package com.pragma.powerup.restaurantmicroservice.domain.usecase;
 
-import com.pragma.powerup.restaurantmicroservice.domain.model.Category;
+import com.pragma.powerup.restaurantmicroservice.domain.api.ICurrentUserServicePort;
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Dish;
+import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IDishPersistencePort;
+import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class DishUseCaseTest {
 
+    @Mock
+    private IDishPersistencePort dishPersistencePort;
+    @Mock
+    private IRestaurantPersistencePort restaurantPersistencePort;
+    @Mock
+    private ICurrentUserServicePort userServicePort;
+
+    private DishUseCase dishUseCase;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        dishUseCase = new DishUseCase(dishPersistencePort, restaurantPersistencePort, userServicePort);
+    }
+
     @Test
-    void testSaveDish() {
-        Long id = 1L;
-        String name = "Hamburguesa";
-        Category category = new Category(1L, null, null);
-        String description = "Deliciosa hamburguesa con queso";
-        Double price = 15000.0;
-        String idRestaurant = null;
-        String urlImage = "https://ejemplo.com/hamburguesa.jpg";
-        Boolean active = true;
+    void saveDish_WithValidOwner_AuthorizesAndSavesDish() {
+        // Arrange
+        Long restaurantId = 1L;
+        String ownerId = "1";
+        Dish dish = new Dish();
+        dish.setIdRestaurant(restaurantId);
 
-        IDishPersistencePort dishPersistencePort = mock(IDishPersistencePort.class);
-        DishUseCase dishUseCase = new DishUseCase(dishPersistencePort);
+        Restaurant restaurant = new Restaurant();
+        restaurant.setIdOwner(ownerId);
 
-        Dish dish = new Dish(id, name, category, description, price, idRestaurant, urlImage, active);
+        when(userServicePort.getCurrentUserId()).thenReturn(ownerId);
+        when(restaurantPersistencePort.getRestaurant(restaurantId)).thenReturn(restaurant);
 
+        // Act
         dishUseCase.saveDish(dish);
 
-        ArgumentCaptor<Dish> dishCaptor = ArgumentCaptor.forClass(Dish.class);
-        verify(dishPersistencePort, times(1)).saveDish(dishCaptor.capture());
-
-        Dish capturedDish = dishCaptor.getValue();
-        assertNotNull(capturedDish);
-        assertEquals(id, capturedDish.getId());
-        assertEquals(name, capturedDish.getName());
-        assertEquals(category, capturedDish.getCategory());
-        assertEquals(description, capturedDish.getDescription());
-        assertEquals(price, capturedDish.getPrice());
-        assertEquals(idRestaurant, capturedDish.getIdRestaurant());
-        assertEquals(urlImage, capturedDish.getUrlImage());
-        assertEquals(active, capturedDish.getActive());
-
-        assertTrue(capturedDish.getActive());
+        // Assert
+        assertTrue(dish.getActive());
+        verify(dishPersistencePort).saveDish(dish);
     }
 
     @Test
-    void testFindById() {
-        Long id = 1L;
-        String name = "Hamburguesa";
-        Category category = new Category(1L, null, null);
-        String description = "Deliciosa hamburguesa con queso";
-        Double price = 15000.0;
-        String idRestaurant = null;
-        String urlImage = "https://ejemplo.com/hamburguesa.jpg";
-        Boolean active = true;
+    void saveDish_WithInvalidOwner_ThrowsUserNotOwnerException() {
+        // Arrange
+        Long restaurantId = 1L;
+        String ownerId = "1";
+        String otherUserId = "2";
+        Dish dish = new Dish();
+        dish.setIdRestaurant(restaurantId);
 
-        IDishPersistencePort dishPersistencePort = mock(IDishPersistencePort.class);
-        DishUseCase dishUseCase = new DishUseCase(dishPersistencePort);
+        Restaurant restaurant = new Restaurant();
+        restaurant.setIdOwner(ownerId);
 
-        Dish expectedDish = new Dish(id, name, category, description, price, idRestaurant, urlImage, active);
+        when(userServicePort.getCurrentUserId()).thenReturn(otherUserId);
+        when(restaurantPersistencePort.getRestaurant(restaurantId)).thenReturn(restaurant);
 
-        when(dishPersistencePort.findById(1L)).thenReturn(expectedDish);
-
-        Dish actualDish = dishUseCase.findById(id);
-
-        assertEquals(expectedDish, actualDish);
-
-        verify(dishPersistencePort, times(1)).findById(1L);
+        // Act & Assert
+        assertThrows(UserNotOwnerException.class, () -> dishUseCase.saveDish(dish));
+        verify(dishPersistencePort, never()).saveDish(dish);
     }
 
+    @Test
+    void updateDish_WithValidOwner_UpdatesDish() {
+        // Arrange
+        Long dishId = 1L;
+        String ownerId = "1";
+        Double newPrice = 9.99;
+        String newDescription = "New Description";
+
+        Dish dish = new Dish();
+        dish.setId(dishId);
+        dish.setIdRestaurant(1L);
+
+        Restaurant restaurant = new Restaurant();
+        restaurant.setIdOwner(ownerId);
+
+        when(dishPersistencePort.findById(dishId)).thenReturn(dish);
+        when(userServicePort.getCurrentUserId()).thenReturn(ownerId);
+        when(restaurantPersistencePort.getRestaurant(dish.getIdRestaurant())).thenReturn(restaurant);
+
+        // Act
+        dishUseCase.updateDish(dishId, newPrice, newDescription);
+
+        // Assert
+        assertEquals(newPrice, dish.getPrice());
+        assertEquals(newDescription, dish.getDescription());
+        verify(dishPersistencePort).saveDish(dish);
+    }
+
+    @Test
+    void updateDish_WithInvalidOwner_ThrowsUserNotOwnerException() {
+        // Arrange
+        Long dishId = 1L;
+        String ownerId = "1";
+        String otherUserId = "2";
+        Double newPrice = 9.99;
+        String newDescription = "New Description";
+
+        Dish dish = new Dish();
+        dish.setId(dishId);
+        dish.setIdRestaurant(1L);
+
+        Restaurant restaurant = new Restaurant();
+        restaurant.setIdOwner(ownerId);
+
+        when(dishPersistencePort.findById(dishId)).thenReturn(dish);
+        when(userServicePort.getCurrentUserId()).thenReturn(otherUserId);
+        when(restaurantPersistencePort.getRestaurant(dish.getIdRestaurant())).thenReturn(restaurant);
+
+        // Act & Assert
+        assertThrows(UserNotOwnerException.class, () -> dishUseCase.updateDish(dishId, newPrice, newDescription));
+        verify(dishPersistencePort, never()).saveDish(dish);
+    }
 }

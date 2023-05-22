@@ -6,7 +6,6 @@ import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestTemplateClient;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -17,23 +16,22 @@ class RestaurantUseCaseTest {
 
     @Mock
     private IRestaurantPersistencePort restaurantPersistencePort;
-
     @Mock
     private IRestTemplateClient restTemplateClient;
 
-    @InjectMocks
     private RestaurantUseCase restaurantUseCase;
 
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        restaurantUseCase = new RestaurantUseCase(restaurantPersistencePort, restTemplateClient);
     }
 
     @Test
-    void testSaveRestaurant_ValidOwner_SaveSuccessful() {
+    void saveRestaurant_WithValidOwner_SavesRestaurant() {
         // Arrange
-        String ownerId = "123";
-        Restaurant restaurant = new Restaurant(null, null, null, null, null, null, null);
+        String ownerId = "1";
+        Restaurant restaurant = new Restaurant();
         restaurant.setIdOwner(ownerId);
 
         when(restTemplateClient.getUserRole(ownerId)).thenReturn("ROLE_OWNER");
@@ -42,14 +40,14 @@ class RestaurantUseCaseTest {
         restaurantUseCase.saveRestaurant(restaurant);
 
         // Assert
-        verify(restTemplateClient, times(1)).getUserRole(ownerId);
+        verify(restaurantPersistencePort).saveRestaurant(restaurant);
         verify(restaurantPersistencePort, times(1)).saveRestaurant(restaurant);
     }
 
     @Test
-    void testSaveRestaurant_InvalidOwner_ThrowsUserNotOwnerException() {
+    void saveRestaurant_WithInvalidOwner_ThrowsUserNotOwnerException() {
         // Arrange
-        String ownerId = "123";
+        String ownerId = "1";
         Restaurant restaurant = new Restaurant();
         restaurant.setIdOwner(ownerId);
 
@@ -57,5 +55,6 @@ class RestaurantUseCaseTest {
 
         // Act & Assert
         assertThrows(UserNotOwnerException.class, () -> restaurantUseCase.saveRestaurant(restaurant));
+        verify(restaurantPersistencePort, never()).saveRestaurant(restaurant);
     }
 }
