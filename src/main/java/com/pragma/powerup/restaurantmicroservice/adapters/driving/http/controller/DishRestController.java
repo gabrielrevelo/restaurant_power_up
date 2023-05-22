@@ -50,4 +50,14 @@ public class DishRestController {
         return ResponseEntity.ok()
                 .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, Constants.DISH_UPDATED_MESSAGE));
     }
+
+    @PatchMapping("state/{id}")
+    @SecurityRequirement(name = "jwt")
+    public ResponseEntity<Map<String, String>> changeStateDish(
+            @PathVariable("id") Long dishId) {
+        dishHandler.changeStateDish(dishId);
+
+        return ResponseEntity.ok()
+                .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, Constants.DISH_CHANGED_STATE_MESSAGE));
+    }
 }

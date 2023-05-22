@@ -38,4 +38,5 @@ public class Constants {
     public static final String INVALID_OWNER_ID_MESSAGE = "Invalid ID for owner user";
     public static final String DISH_UPDATED_MESSAGE = "Dish updated successfully";
     public static final String ACCESS_DENIED_MESSAGE = "Access denied. Insufficient permissions.";
+    public static final String DISH_CHANGED_STATE_MESSAGE = "Dish state changed successfully";
 }

@@ -45,4 +45,13 @@ public class DishUseCase implements IDishServicePort {
         dish.setDescription(description);
         dishPersistencePort.saveDish(dish);
     }
+
+    @Override
+    public void changeStateDish(Long id) {
+        Dish dish = dishPersistencePort.findById(id);
+        checkOwnerAuthorization(dish.getIdRestaurant());
+
+        dish.setActive(!dish.getActive());
+        dishPersistencePort.saveDish(dish);
+    }
 }
