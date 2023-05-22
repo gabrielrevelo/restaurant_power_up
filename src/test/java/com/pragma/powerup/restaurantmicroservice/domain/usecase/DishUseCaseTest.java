@@ -125,4 +125,28 @@ class DishUseCaseTest {
         assertThrows(UserNotOwnerException.class, () -> dishUseCase.updateDish(dishId, newPrice, newDescription));
         verify(dishPersistencePort, never()).saveDish(dish);
     }
+
+    @Test
+    void changeStateDish_WithValidOwner_ShouldToggleDishState() {
+        // Arrange
+        Long dishId = 1L;
+        Dish dish = new Dish();
+        dish.setId(dishId);
+        dish.setIdRestaurant(1L);
+        dish.setActive(true);
+        Restaurant restaurant = new Restaurant();
+        restaurant.setId(1L);
+        restaurant.setIdOwner("1");
+
+        when(dishPersistencePort.findById(dishId)).thenReturn(dish);
+        when(userServicePort.getCurrentUserId()).thenReturn("1");
+        when(restaurantPersistencePort.getRestaurant(1L)).thenReturn(restaurant);
+
+        // Act
+        dishUseCase.changeStateDish(dishId);
+
+        // Assert
+        assertFalse(dish.getActive());
+        verify(dishPersistencePort, times(1)).saveDish(dish);
+    }
 }
