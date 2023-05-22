@@ -19,7 +19,7 @@ public class DishRequestDto {
     @Schema(description = "Name", example = "Hamburguesa")
     private String name;
     @NotNull(message = Constants.EMPTY_FIELD_MESSAGE)
-    @Schema(description = "Category", example = "1L")
+    @Schema(description = "Category", example = "1", type = "Long")
     private Long category;
     @NotEmpty(message = Constants.EMPTY_FIELD_MESSAGE)
     @Schema(description = "Description", example = "Hamburguesa con queso")
@@ -30,4 +30,7 @@ public class DishRequestDto {
     @NotEmpty(message = Constants.EMPTY_FIELD_MESSAGE)
     @Schema(description = "URL Image", example = "https://ejemplo.com/image.png")
     private String urlImage;
+    @NotNull(message = Constants.EMPTY_FIELD_MESSAGE)
+    @Schema(description = "ID Restaurant", example = "1", type = "Long")
+    private Long idRestaurant;
 }

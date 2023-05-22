@@ -4,4 +4,6 @@ import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
 
 public interface IRestaurantPersistencePort {
     void saveRestaurant(Restaurant restaurant);
+
+    Restaurant getRestaurant(Long idRestaurant);
 }

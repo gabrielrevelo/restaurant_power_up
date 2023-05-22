@@ -25,7 +25,9 @@ public class Constants {
     public static final String ROLE_NOT_ALLOWED_MESSAGE = "No permission granted to create users with this role";
     public static final String USER_ALREADY_EXISTS_MESSAGE = "A user already exists with the role provided";
     public static final String USER_NOT_FOUND_MESSAGE = "No user found";
-    public static final String SWAGGER_TITLE_MESSAGE = "User API Pragma Power Up";
+    public static final String RESTAURANT_NOT_FOUND_MESSAGE = "No restaurant found";
+    public static final String DISH_NOT_FOUND_MESSAGE = "No dish found";
+    public static final String SWAGGER_TITLE_MESSAGE = "Restaurant API Pragma Power Up";
     public static final String SWAGGER_DESCRIPTION_MESSAGE = "User microservice";
     public static final String SWAGGER_VERSION_MESSAGE = "1.0.0";
     public static final String SWAGGER_LICENSE_NAME_MESSAGE = "Apache 2.0";
@@ -35,4 +37,5 @@ public class Constants {
     public static final String INVALID_FORMAT_MESSAGE = "Invalid format";
     public static final String INVALID_OWNER_ID_MESSAGE = "Invalid ID for owner user";
     public static final String DISH_UPDATED_MESSAGE = "Dish updated successfully";
+    public static final String ACCESS_DENIED_MESSAGE = "Access denied. Insufficient permissions.";
 }

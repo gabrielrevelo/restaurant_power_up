@@ -7,8 +7,10 @@ import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.mappe
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.repositories.IDishRepository;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.repositories.IRestaurantRepository;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.adapter.RestTemplateClient;
+import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.HttpCurrentUserProvider;
 import com.pragma.powerup.restaurantmicroservice.domain.api.IDishServicePort;
 import com.pragma.powerup.restaurantmicroservice.domain.api.IRestaurantServicePort;
+import com.pragma.powerup.restaurantmicroservice.domain.api.ICurrentUserServicePort;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IDishPersistencePort;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestTemplateClient;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
@@ -46,7 +48,11 @@ public class BeanConfiguration {
         return new DishMysqlAdapter(dishRepository, dishEntityMapper);
     }
     @Bean
+    public ICurrentUserServicePort userServicePort() {
+        return new HttpCurrentUserProvider();
+    }
+    @Bean
     public IDishServicePort dishServicePort() {
-        return new DishUseCase(dishPersistencePort());
+        return new DishUseCase(dishPersistencePort(), restaurantPersistencePort(), userServicePort());
     }
 }

@@ -6,11 +6,11 @@ public class Dish {
     private Category category;
     private String description;
     private Double price;
-    private String idRestaurant;
+    private Long idRestaurant;
     private String urlImage;
     private Boolean active;
 
-    public Dish(Long id, String name, Category category, String description, Double price, String idRestaurant, String urlImage, Boolean active) {
+    public Dish(Long id, String name, Category category, String description, Double price, Long idRestaurant, String urlImage, Boolean active) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -61,11 +61,11 @@ public class Dish {
         this.price = price;
     }
 
-    public String getIdRestaurant() {
+    public Long getIdRestaurant() {
         return idRestaurant;
     }
 
-    public void setIdRestaurant(String idRestaurant) {
+    public void setIdRestaurant(Long idRestaurant) {
         this.idRestaurant = idRestaurant;
     }
 
