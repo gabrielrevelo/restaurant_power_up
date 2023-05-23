@@ -6,6 +6,7 @@ import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestTemplateClient;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
 
+import java.util.List;
 import java.util.Objects;
 
 public class RestaurantUseCase implements IRestaurantServicePort {
@@ -26,4 +27,10 @@ public class RestaurantUseCase implements IRestaurantServicePort {
             throw new UserNotOwnerException();
         }
     }
+
+    @Override
+    public List<Restaurant> listRestaurants() {
+        return restaurantPersistencePort.listRestaurants();
+    }
+
 }

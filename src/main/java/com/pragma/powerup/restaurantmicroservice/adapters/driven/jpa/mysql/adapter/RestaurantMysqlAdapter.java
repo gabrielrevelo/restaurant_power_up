@@ -8,6 +8,8 @@ import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 public class RestaurantMysqlAdapter implements IRestaurantPersistencePort {
     private final IRestaurantRepository restaurantRepository;
@@ -24,5 +26,14 @@ public class RestaurantMysqlAdapter implements IRestaurantPersistencePort {
         RestaurantEntity restaurantEntity = restaurantRepository.findById(idRestaurant)
                 .orElseThrow(RestaurantNotFoundException::new);
         return restaurantEntityMapper.toDomain(restaurantEntity);
+    }
+
+    @Override
+    public List<Restaurant> listRestaurants() {
+        List<RestaurantEntity> roleEntityList = restaurantRepository.findAll();
+        if (roleEntityList.isEmpty()) {
+            throw new RestaurantNotFoundException();
+        }
+        return restaurantEntityMapper.toDomainList(roleEntityList);
     }
 }
