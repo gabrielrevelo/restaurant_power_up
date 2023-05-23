@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -56,5 +59,19 @@ class RestaurantUseCaseTest {
         // Act & Assert
         assertThrows(UserNotOwnerException.class, () -> restaurantUseCase.saveRestaurant(restaurant));
         verify(restaurantPersistencePort, never()).saveRestaurant(restaurant);
+    }
+
+    @Test
+    void listRestaurants_ReturnsListOfRestaurants_WhenRestaurantsExist() {
+        // Arrange
+        List<Restaurant> expectedRestaurants = Collections.singletonList(new Restaurant());
+        when(restaurantPersistencePort.listRestaurants()).thenReturn(expectedRestaurants);
+
+        // Act
+        List<Restaurant> result = restaurantUseCase.listRestaurants();
+
+        // Assert
+        assertEquals(expectedRestaurants, result);
+        verify(restaurantPersistencePort, times(1)).listRestaurants();
     }
 }
