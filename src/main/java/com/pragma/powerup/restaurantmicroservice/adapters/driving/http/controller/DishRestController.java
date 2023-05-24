@@ -29,7 +29,7 @@ public class DishRestController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "Dish created",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Map"))),
-                    @ApiResponse(responseCode = "409", description = "Dish already exists",
+                    @ApiResponse(responseCode = "400", description = "Dish not created",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
     @PostMapping()
     @SecurityRequirement(name = "jwt")
@@ -40,6 +40,12 @@ public class DishRestController {
                 .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, Constants.DISH_CREATED_MESSAGE));
     }
 
+    @Operation(summary = "Update a Dish",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Dish updated",
+                            content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Map"))),
+                    @ApiResponse(responseCode = "400", description = "Dish not updated",
+                            content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
     @PatchMapping("/{id}")
     @SecurityRequirement(name = "jwt")
     public ResponseEntity<Map<String, String>> updateDish(
