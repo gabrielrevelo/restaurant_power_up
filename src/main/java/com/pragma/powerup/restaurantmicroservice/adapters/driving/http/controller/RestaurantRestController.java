@@ -42,7 +42,7 @@ public class RestaurantRestController {
 
     @GetMapping("/list")
     @SecurityRequirement(name = "jwt")
-    public ResponseEntity<List<RestaurantResponseDto>> getAllRestaurants(
+    public ResponseEntity<List<RestaurantResponseDto>> getRestaurants(
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "1") int pageNumber) {
         return ResponseEntity.ok(restaurantHandler.listRestaurants(pageSize, pageNumber));

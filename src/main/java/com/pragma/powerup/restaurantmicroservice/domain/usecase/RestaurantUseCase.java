@@ -22,11 +22,11 @@ public class RestaurantUseCase implements IRestaurantServicePort {
 
     @Override
     public void saveRestaurant(Restaurant restaurant) {
-        if(Objects.equals(restTemplateClient.getUserRole(restaurant.getIdOwner()), "ROLE_OWNER")) {
-            restaurantPersistencePort.saveRestaurant(restaurant);
-        } else {
+        if(!Objects.equals(restTemplateClient.getUserRole(restaurant.getIdOwner()), "ROLE_OWNER")) {
             throw new UserNotOwnerException();
         }
+
+        restaurantPersistencePort.saveRestaurant(restaurant);
     }
 
     @Override

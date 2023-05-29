@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,16 +62,30 @@ class RestaurantUseCaseTest {
     }
 
     @Test
-    void listRestaurants_ReturnsListOfRestaurants_WhenRestaurantsExist() {
+    void testListRestaurants() {
         // Arrange
-        List<Restaurant> expectedRestaurants = Collections.singletonList(new Restaurant());
-        when(restaurantPersistencePort.listRestaurants()).thenReturn(expectedRestaurants);
+        List<Restaurant> allRestaurants = Arrays.asList(
+                new Restaurant("Restaurant A"),
+                new Restaurant("Restaurant C"),
+                new Restaurant("Restaurant B"),
+                new Restaurant("Restaurant D")
+        );
+
+        List<Restaurant> expected = Arrays.asList(
+                new Restaurant("Restaurant A"),
+                new Restaurant("Restaurant B")
+        );
+
+        int pageSize = 2;
+        int pageNumber = 1;
+
+        when(restaurantPersistencePort.listRestaurants()).thenReturn(allRestaurants);
 
         // Act
-        List<Restaurant> result = restaurantUseCase.listRestaurants();
+        List<Restaurant> result = restaurantUseCase.listRestaurants(pageSize, pageNumber);
 
         // Assert
-        assertEquals(expectedRestaurants, result);
+        assertEquals(expected, result);
         verify(restaurantPersistencePort, times(1)).listRestaurants();
     }
 }
