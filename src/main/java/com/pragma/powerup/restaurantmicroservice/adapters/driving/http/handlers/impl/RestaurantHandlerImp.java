@@ -23,7 +23,7 @@ public class RestaurantHandlerImp implements IRestaurantHandler {
     }
 
     @Override
-    public List<RestaurantResponseDto> listRestaurants() {
-        return restaurantRequestMapper.toResponseList(restaurantServicePort.listRestaurants());
+    public List<RestaurantResponseDto> listRestaurants(int pageSize, int pageNumber) {
+        return restaurantRequestMapper.toResponseList(restaurantServicePort.listRestaurants(pageSize, pageNumber));
     }
 }

@@ -8,5 +8,5 @@ public interface IRestaurantServicePort {
 
     void saveRestaurant(Restaurant restaurant);
 
-    List<Restaurant> listRestaurants();
+    List<Restaurant> listRestaurants(int pageSize, int pageNumber);
 }
