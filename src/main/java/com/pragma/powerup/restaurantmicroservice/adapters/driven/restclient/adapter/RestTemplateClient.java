@@ -27,7 +27,7 @@ public class RestTemplateClient implements IRestTemplateClient {
             HttpHeaders headers = new HttpHeaders();
             HttpEntity<String> requestEntity = new HttpEntity<>(headers);
             headers.set("Authorization", "Bearer " + token);
-            String url = userMicroUrlBase + "user/role/" + userId;
+            String url = userMicroUrlBase + "role/" + userId;
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, Map.class);
             if (!response.getStatusCode().is2xxSuccessful()) {
                 throw new UserRoleNotFoundException();
