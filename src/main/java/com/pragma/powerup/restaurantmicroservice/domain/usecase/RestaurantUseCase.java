@@ -5,6 +5,7 @@ import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerE
 import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestTemplateClient;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
+import com.pragma.powerup.restaurantmicroservice.domain.util.PaginationUtil;
 
 import java.util.Comparator;
 import java.util.List;
@@ -35,11 +36,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
 
         restaurants.sort(Comparator.comparing(Restaurant::getName));
 
-        int startIndex = (pageNumber - 1) * pageSize;
-        int endIndex = Math.min(startIndex + pageSize, restaurants.size());
-        restaurants = restaurants.subList(startIndex, endIndex);
-
-        return restaurants;
+        return PaginationUtil.paginate(restaurants, pageSize, pageNumber);
     }
 
 }
