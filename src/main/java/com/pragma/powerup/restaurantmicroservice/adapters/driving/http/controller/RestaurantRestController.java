@@ -31,7 +31,7 @@ public class RestaurantRestController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "Restaurant created",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Map"))),
-                    @ApiResponse(responseCode = "409", description = "Restaurant already exists",
+                    @ApiResponse(responseCode = "400", description = "Restaurant not created",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
     @PostMapping()
     @SecurityRequirement(name = "jwt")
