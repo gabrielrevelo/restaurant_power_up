@@ -5,7 +5,10 @@ import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerE
 import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestTemplateClient;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
+import com.pragma.powerup.restaurantmicroservice.domain.util.PaginationUtil;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 public class RestaurantUseCase implements IRestaurantServicePort {
@@ -20,10 +23,20 @@ public class RestaurantUseCase implements IRestaurantServicePort {
 
     @Override
     public void saveRestaurant(Restaurant restaurant) {
-        if(Objects.equals(restTemplateClient.getUserRole(restaurant.getIdOwner()), "ROLE_OWNER")) {
-            restaurantPersistencePort.saveRestaurant(restaurant);
-        } else {
+        if(!Objects.equals(restTemplateClient.getUserRole(restaurant.getIdOwner()), "ROLE_OWNER")) {
             throw new UserNotOwnerException();
         }
+
+        restaurantPersistencePort.saveRestaurant(restaurant);
     }
+
+    @Override
+    public List<Restaurant> listRestaurants(int pageSize, int pageNumber) {
+        List<Restaurant> restaurants = restaurantPersistencePort.listRestaurants();
+
+        restaurants.sort(Comparator.comparing(Restaurant::getName));
+
+        return PaginationUtil.paginate(restaurants, pageSize, pageNumber);
+    }
+
 }

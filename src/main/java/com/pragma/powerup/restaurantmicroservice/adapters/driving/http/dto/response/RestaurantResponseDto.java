@@ -7,9 +7,5 @@ import lombok.Getter;
 @Getter
 public class RestaurantResponseDto {
     private String name;
-    private String address;
-    private String idOwner;
-    private String phone;
     private String urlLogo;
-    private String nit;
 }
