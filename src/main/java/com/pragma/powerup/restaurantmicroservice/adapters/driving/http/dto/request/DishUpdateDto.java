@@ -19,6 +19,6 @@ public class DishUpdateDto {
     @Schema(description = "Price", example = "30000")
     private Double price;
     @NotEmpty(message = Constants.EMPTY_FIELD_MESSAGE)
-    @Schema(description = "Description", example = "Hamburguesa con queso")
+    @Schema(description = "Description", example = "Hamburguesa con queso editada")
     private String description;
 }

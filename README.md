@@ -57,12 +57,11 @@ To get a local copy up and running follow these steps.
 
 ### Validations
 
-| Field           | Requirement                                                                                      | Example        |
-|-----------------|--------------------------------------------------------------------------------------------------|----------------|
-| Phone Number    | The phone number should be in Colombian format, with the respective prefix.                      | +573001234567  |
-|                 | The "+" sign at the beginning of the number is optional.                                         | 573001234567   |
-| NIT             | The NIT field should contain only numeric characters.                                            | 1234567890     |
-| Restaurant Name | The restaurant name can contain numbers, but names consisting solely of numbers are not allowed. | Restaurant 123 |
+| Field           | Requirement                                                                                                                               | Example                         |
+|-----------------|-------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
+| Phone Number    | The phone number should be in Colombian format, with the respective prefix. <br> The "+" sign at the beginning of the number is optional. | +573001234567 <br> 573001234567 |
+| NIT             | The NIT field should contain only numeric characters.                                                                                     | 1234567890                      |
+| Restaurant Name | The restaurant name can contain numbers, but names consisting solely of numbers are not allowed.                                          | Restaurant 123                  |
 
 <!-- ROADMAP -->
 ## Tests
