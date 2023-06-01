@@ -2,7 +2,9 @@ package com.pragma.powerup.restaurantmicroservice.configuration;
 
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.exceptions.DishNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.exceptions.RestaurantNotFoundException;
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.exceptions.EmployeeCreationException;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.exceptions.UserRoleNotFoundException;
+import com.pragma.powerup.restaurantmicroservice.configuration.response.ErrorApiResponse;
 import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -75,4 +77,9 @@ public class ControllerAdvisor {
                 .body(Collections.singletonMap(RESPONSE_ERROR_MESSAGE_KEY, httpMessageNotReadableException.getMessage()));
     }
 
+    @ExceptionHandler(EmployeeCreationException.class)
+    public ResponseEntity<Object> handleEmployeeCreationException(EmployeeCreationException employeeCreationException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorApiResponse(employeeCreationException.getMessage()));
+    }
 }
