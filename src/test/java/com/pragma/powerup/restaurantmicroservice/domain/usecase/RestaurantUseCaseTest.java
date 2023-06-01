@@ -2,7 +2,7 @@ package com.pragma.powerup.restaurantmicroservice.domain.usecase;
 
 import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
-import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestTemplateClient;
+import com.pragma.powerup.restaurantmicroservice.domain.spi.IUserClient;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ class RestaurantUseCaseTest {
     @Mock
     private IRestaurantPersistencePort restaurantPersistencePort;
     @Mock
-    private IRestTemplateClient restTemplateClient;
+    private IUserClient restTemplateClient;
 
     private RestaurantUseCase restaurantUseCase;
 

@@ -1,6 +1,6 @@
 package com.pragma.powerup.restaurantmicroservice.domain.spi;
 
-public interface IRestTemplateClient {
+public interface IUserClient {
 
     String getUserRole(String userId);
 
