@@ -1,36 +1,23 @@
 package com.pragma.powerup.restaurantmicroservice.domain.usecase;
 
 import com.pragma.powerup.restaurantmicroservice.domain.api.IDishServicePort;
-import com.pragma.powerup.restaurantmicroservice.domain.api.ICurrentUserServicePort;
-import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Dish;
-import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IDishPersistencePort;
-import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
+import com.pragma.powerup.restaurantmicroservice.domain.util.AuthorizationUtil;
 
 public class DishUseCase implements IDishServicePort {
 
     private final IDishPersistencePort dishPersistencePort;
-    private final IRestaurantPersistencePort restaurantPersistencePort;
-    private final ICurrentUserServicePort userServicePort;
+    private final AuthorizationUtil authorizationUtil;
 
-    public DishUseCase(IDishPersistencePort dishPersistencePort, IRestaurantPersistencePort restaurantPersistencePort, ICurrentUserServicePort userServicePort) {
+    public DishUseCase(IDishPersistencePort dishPersistencePort, AuthorizationUtil authorizationUtil) {
         this.dishPersistencePort = dishPersistencePort;
-        this.restaurantPersistencePort = restaurantPersistencePort;
-        this.userServicePort = userServicePort;
-    }
-
-    private void checkOwnerAuthorization(Long restaurantId) {
-        String userId = userServicePort.getCurrentUserId();
-        Restaurant restaurant = restaurantPersistencePort.getRestaurant(restaurantId);
-        if (!restaurant.getIdOwner().equals(userId)) {
-            throw new UserNotOwnerException("User not owner of restaurant");
-        }
+        this.authorizationUtil = authorizationUtil;
     }
 
     @Override
     public void saveDish(Dish dish) {
-        checkOwnerAuthorization(dish.getIdRestaurant());
+        authorizationUtil.checkOwnerAuthorization(dish.getIdRestaurant());
 
         dish.setActive(true);
         dishPersistencePort.saveDish(dish);
@@ -39,7 +26,7 @@ public class DishUseCase implements IDishServicePort {
     @Override
     public void updateDish(Long id, Double price, String description) {
         Dish dish = dishPersistencePort.findById(id);
-        checkOwnerAuthorization(dish.getIdRestaurant());
+        authorizationUtil.checkOwnerAuthorization(dish.getIdRestaurant());
 
         dish.setPrice(price);
         dish.setDescription(description);
@@ -49,7 +36,7 @@ public class DishUseCase implements IDishServicePort {
     @Override
     public void changeStateDish(Long id) {
         Dish dish = dishPersistencePort.findById(id);
-        checkOwnerAuthorization(dish.getIdRestaurant());
+        authorizationUtil.checkOwnerAuthorization(dish.getIdRestaurant());
 
         dish.setActive(!dish.getActive());
         dishPersistencePort.saveDish(dish);

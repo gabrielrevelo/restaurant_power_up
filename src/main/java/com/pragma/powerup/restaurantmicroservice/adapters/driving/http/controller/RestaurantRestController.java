@@ -1,9 +1,12 @@
 package com.pragma.powerup.restaurantmicroservice.adapters.driving.http.controller;
 
+import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.dto.request.EmployeeRequestDto;
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.dto.request.RestaurantRequestDto;
+import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.dto.response.EmployeeResponseDto;
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.dto.response.RestaurantResponseDto;
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.handlers.IRestaurantHandler;
 import com.pragma.powerup.restaurantmicroservice.configuration.Constants;
+import com.pragma.powerup.restaurantmicroservice.configuration.response.SuccessfulApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -46,5 +49,21 @@ public class RestaurantRestController {
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "1") int pageNumber) {
         return ResponseEntity.ok(restaurantHandler.listRestaurants(pageSize, pageNumber));
+    }
+
+    @Operation(summary = "Register a new Employee in a Restaurant",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Employee registered",
+                            content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Map"))),
+                    @ApiResponse(responseCode = "400", description = "Employee not registered",
+                            content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
+    @PostMapping("/{id}/employee")
+    @SecurityRequirement(name = "jwt")
+    public ResponseEntity<SuccessfulApiResponse<EmployeeResponseDto>> registerEmployee(@Valid @RequestBody EmployeeRequestDto employeeRequestDto,
+                                                                                       @PathVariable("id") Long restaurantId) {
+        EmployeeResponseDto employeeResponseDto = restaurantHandler.registerEmployee(employeeRequestDto, restaurantId);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new SuccessfulApiResponse<>( "Empleado creado correctamente", employeeResponseDto));
     }
 }

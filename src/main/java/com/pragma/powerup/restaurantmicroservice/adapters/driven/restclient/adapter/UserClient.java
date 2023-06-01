@@ -1,11 +1,11 @@
 package com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.adapter;
 
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.exceptions.EmployeeCreationException;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.exceptions.UserRoleNotFoundException;
+import com.pragma.powerup.restaurantmicroservice.configuration.response.CustomApiResponse;
+import com.pragma.powerup.restaurantmicroservice.domain.model.Employee;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IUserClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Map;
 
@@ -17,14 +17,22 @@ public class UserClient implements IUserClient {
         this.userMicroClient = userMicroClient;
     }
 
-    public String getUserRole(String userId) {
+    public String getUserRole(String userId, String token) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String token = (String) authentication.getCredentials();
             Map<String, String> responseData = userMicroClient.getUserRole(userId, "Bearer " + token);
             return responseData.get("role");
-        } catch (HttpClientErrorException.NotFound ex) {
+        } catch (Exception ex) {
             throw new UserRoleNotFoundException();
+        }
+    }
+
+    public Long createEmployee(Employee employee, String token) {
+        try {
+            CustomApiResponse<UserResponseDto> responseData = userMicroClient.createEmployee(employee, "Bearer " + token);
+            UserResponseDto userResponseDto = responseData.getData();
+            return userResponseDto.getId();
+        } catch (Exception ex) {
+            throw new EmployeeCreationException(ex.getMessage());
         }
     }
 }

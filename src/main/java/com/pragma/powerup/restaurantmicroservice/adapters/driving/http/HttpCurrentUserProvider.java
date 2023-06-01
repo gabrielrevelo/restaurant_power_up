@@ -18,4 +18,10 @@ public class HttpCurrentUserProvider implements ICurrentUserServicePort {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
     }
+
+    @Override
+    public String getCurrentUserToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (String) authentication.getCredentials();
+    }
 }

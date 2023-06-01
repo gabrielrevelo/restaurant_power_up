@@ -27,7 +27,7 @@ class RestaurantUseCaseTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        restaurantUseCase = new RestaurantUseCase(restaurantPersistencePort, restTemplateClient);
+        restaurantUseCase = new RestaurantUseCase(restaurantPersistencePort, employeeRestaurantPersistencePort, restTemplateClient, userServicePort);
     }
 
     @Test
