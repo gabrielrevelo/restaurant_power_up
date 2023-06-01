@@ -3,7 +3,7 @@ package com.pragma.powerup.restaurantmicroservice.domain.usecase;
 import com.pragma.powerup.restaurantmicroservice.domain.api.IRestaurantServicePort;
 import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
-import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestTemplateClient;
+import com.pragma.powerup.restaurantmicroservice.domain.spi.IUserClient;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
 import com.pragma.powerup.restaurantmicroservice.domain.util.PaginationUtil;
 
@@ -14,16 +14,16 @@ import java.util.Objects;
 public class RestaurantUseCase implements IRestaurantServicePort {
 
     private final IRestaurantPersistencePort restaurantPersistencePort;
-    private final IRestTemplateClient restTemplateClient;
+    private final IUserClient userClient;
 
-    public RestaurantUseCase(IRestaurantPersistencePort restaurantPersistencePort, IRestTemplateClient restTemplateClient) {
+    public RestaurantUseCase(IRestaurantPersistencePort restaurantPersistencePort, IUserClient userClient) {
         this.restaurantPersistencePort = restaurantPersistencePort;
-        this.restTemplateClient = restTemplateClient;
+        this.userClient = userClient;
     }
 
     @Override
     public void saveRestaurant(Restaurant restaurant) {
-        if(!Objects.equals(restTemplateClient.getUserRole(restaurant.getIdOwner()), "ROLE_OWNER")) {
+        if(!Objects.equals(userClient.getUserRole(restaurant.getIdOwner()), "ROLE_OWNER")) {
             throw new UserNotOwnerException();
         }
 
