@@ -12,11 +12,7 @@ public class EmployeeRestaurantMysqlAdapter implements IEmployeeRestaurantPersis
 
     @Override
     public void saveEmployeeRestaurant(Long idEmployee, Long idRestaurant) {
-        EmployeeRestaurantEntity employeeRestaurantEntity = new EmployeeRestaurantEntity();
-        EmployeeRestaurantEntity.EmployeeRestaurantId employeeRestaurantId = new EmployeeRestaurantEntity.EmployeeRestaurantId();
-        employeeRestaurantId.setIdEmployee(idEmployee);
-        employeeRestaurantId.setIdRestaurant(idRestaurant);
-        employeeRestaurantEntity.setId(employeeRestaurantId);
+        EmployeeRestaurantEntity employeeRestaurantEntity = new EmployeeRestaurantEntity(idEmployee, idRestaurant);
         employeeRestaurantRepository.save(employeeRestaurantEntity);
     }
 }

@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
-
 @Entity
 @Table(name = "employee_restaurant")
 @NoArgsConstructor
@@ -15,16 +13,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class EmployeeRestaurantEntity {
-    @EmbeddedId
-    private EmployeeRestaurantId id;
-
-    @Embeddable
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Getter
-    @Setter
-    public static class EmployeeRestaurantId implements Serializable {
-        private Long idEmployee;
-        private Long idRestaurant;
-    }
+    @Id
+    private Long idEmployee;
+    private Long idRestaurant;
 }
