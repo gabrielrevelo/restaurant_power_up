@@ -1,5 +1,6 @@
 package com.pragma.powerup.restaurantmicroservice.domain.usecase;
 
+import com.pragma.powerup.restaurantmicroservice.configuration.Constants;
 import com.pragma.powerup.restaurantmicroservice.domain.api.IRestaurantServicePort;
 import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Employee;
@@ -33,7 +34,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     public void saveRestaurant(Restaurant restaurant) {
         String token = authorizationUtil.getUserToken();
 
-        if(!Objects.equals(userClient.getUserRole(restaurant.getIdOwner(), token), "ROLE_OWNER")) {
+        if(!Objects.equals(userClient.getIdUserRole(restaurant.getIdOwner(), token), Constants.OWNER_ROLE_ID)) {
             throw new UserNotOwnerException();
         }
 

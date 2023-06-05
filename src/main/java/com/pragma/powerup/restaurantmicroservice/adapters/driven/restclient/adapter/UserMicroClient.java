@@ -8,12 +8,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-import java.util.Map;
-
 @FeignClient(name = "userMicroClient", url = "${app.userMicroUrlBase}")
 public interface UserMicroClient {
     @GetMapping("/role/{userId}")
-    Map<String, String> getUserRole(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token);
+    CustomApiResponse<RoleResponseDto> getUserRole(@PathVariable("userId") String userId, @RequestHeader("Authorization") String token);
 
     @PostMapping("/user/employee")
     CustomApiResponse<UserResponseDto> createEmployee(Employee employee, @RequestHeader("Authorization") String token);

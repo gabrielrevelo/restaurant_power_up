@@ -7,8 +7,6 @@ import com.pragma.powerup.restaurantmicroservice.domain.model.Employee;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IUserClient;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Map;
-
 public class UserClient implements IUserClient {
     private final UserMicroClient userMicroClient;
 
@@ -17,10 +15,11 @@ public class UserClient implements IUserClient {
         this.userMicroClient = userMicroClient;
     }
 
-    public String getUserRole(String userId, String token) {
+    public Long getIdUserRole(String userId, String token) {
         try {
-            Map<String, String> responseData = userMicroClient.getUserRole(userId, "Bearer " + token);
-            return responseData.get("role");
+            CustomApiResponse<RoleResponseDto> responseData = userMicroClient.getUserRole(userId, "Bearer " + token);
+            RoleResponseDto roleResponseDto = responseData.getData();
+            return roleResponseDto.getId();
         } catch (Exception ex) {
             throw new UserRoleNotFoundException();
         }
