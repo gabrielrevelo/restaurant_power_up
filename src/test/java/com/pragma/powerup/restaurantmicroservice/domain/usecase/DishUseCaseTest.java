@@ -1,11 +1,10 @@
 package com.pragma.powerup.restaurantmicroservice.domain.usecase;
 
 import com.pragma.powerup.restaurantmicroservice.domain.api.ICurrentUserServicePort;
-import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Dish;
-import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IDishPersistencePort;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
+import com.pragma.powerup.restaurantmicroservice.domain.util.AuthorizationUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -22,131 +21,65 @@ class DishUseCaseTest {
     private IRestaurantPersistencePort restaurantPersistencePort;
     @Mock
     private ICurrentUserServicePort userServicePort;
+    @Mock
+    private AuthorizationUtil authorizationUtil;
 
     private DishUseCase dishUseCase;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        dishUseCase = new DishUseCase(dishPersistencePort, restaurantPersistencePort, userServicePort);
+        dishUseCase = new DishUseCase(dishPersistencePort, authorizationUtil);
     }
 
     @Test
-    void saveDish_WithValidOwner_AuthorizesAndSavesDish() {
-        // Arrange
-        Long restaurantId = 1L;
-        String ownerId = "1";
+    void saveDish() {
         Dish dish = new Dish();
-        dish.setIdRestaurant(restaurantId);
 
-        Restaurant restaurant = new Restaurant();
-        restaurant.setIdOwner(ownerId);
-
-        when(userServicePort.getCurrentUserId()).thenReturn(ownerId);
-        when(restaurantPersistencePort.getRestaurant(restaurantId)).thenReturn(restaurant);
-
-        // Act
         dishUseCase.saveDish(dish);
 
-        // Assert
         assertTrue(dish.getActive());
         verify(dishPersistencePort).saveDish(dish);
     }
 
     @Test
-    void saveDish_WithInvalidOwner_ThrowsUserNotOwnerException() {
-        // Arrange
-        Long restaurantId = 1L;
-        String ownerId = "1";
-        String otherUserId = "2";
+    void updateDish() {
         Dish dish = new Dish();
-        dish.setIdRestaurant(restaurantId);
-
-        Restaurant restaurant = new Restaurant();
-        restaurant.setIdOwner(ownerId);
-
-        when(userServicePort.getCurrentUserId()).thenReturn(otherUserId);
-        when(restaurantPersistencePort.getRestaurant(restaurantId)).thenReturn(restaurant);
-
-        // Act & Assert
-        assertThrows(UserNotOwnerException.class, () -> dishUseCase.saveDish(dish));
-        verify(dishPersistencePort, never()).saveDish(dish);
-    }
-
-    @Test
-    void updateDish_WithValidOwner_UpdatesDish() {
-        // Arrange
-        Long dishId = 1L;
-        String ownerId = "1";
-        Double newPrice = 9.99;
+        dish.setId(1L);
+        Double newPrice = 10.0;
         String newDescription = "New Description";
+        when(dishPersistencePort.findById(dish.getId())).thenReturn(dish);
 
-        Dish dish = new Dish();
-        dish.setId(dishId);
-        dish.setIdRestaurant(1L);
+        dishUseCase.updateDish(dish.getId(), newPrice, newDescription);
 
-        Restaurant restaurant = new Restaurant();
-        restaurant.setIdOwner(ownerId);
-
-        when(dishPersistencePort.findById(dishId)).thenReturn(dish);
-        when(userServicePort.getCurrentUserId()).thenReturn(ownerId);
-        when(restaurantPersistencePort.getRestaurant(dish.getIdRestaurant())).thenReturn(restaurant);
-
-        // Act
-        dishUseCase.updateDish(dishId, newPrice, newDescription);
-
-        // Assert
         assertEquals(newPrice, dish.getPrice());
         assertEquals(newDescription, dish.getDescription());
         verify(dishPersistencePort).saveDish(dish);
     }
 
     @Test
-    void updateDish_WithInvalidOwner_ThrowsUserNotOwnerException() {
-        // Arrange
-        Long dishId = 1L;
-        String ownerId = "1";
-        String otherUserId = "2";
-        Double newPrice = 9.99;
-        String newDescription = "New Description";
-
+    void changeStateDish_trueToFalse() {
         Dish dish = new Dish();
-        dish.setId(dishId);
-        dish.setIdRestaurant(1L);
+        dish.setId(1L);
+        dish.setActive(true);
+        when(dishPersistencePort.findById(dish.getId())).thenReturn(dish);
 
-        Restaurant restaurant = new Restaurant();
-        restaurant.setIdOwner(ownerId);
+        dishUseCase.changeStateDish(dish.getId());
 
-        when(dishPersistencePort.findById(dishId)).thenReturn(dish);
-        when(userServicePort.getCurrentUserId()).thenReturn(otherUserId);
-        when(restaurantPersistencePort.getRestaurant(dish.getIdRestaurant())).thenReturn(restaurant);
-
-        // Act & Assert
-        assertThrows(UserNotOwnerException.class, () -> dishUseCase.updateDish(dishId, newPrice, newDescription));
-        verify(dishPersistencePort, never()).saveDish(dish);
+        assertFalse(dish.getActive());
+        verify(dishPersistencePort).saveDish(dish);
     }
 
     @Test
-    void changeStateDish_WithValidOwner_ShouldToggleDishState() {
-        // Arrange
-        Long dishId = 1L;
+    void changeStateDish_falseToTrue() {
         Dish dish = new Dish();
-        dish.setId(dishId);
-        dish.setIdRestaurant(1L);
-        dish.setActive(true);
-        Restaurant restaurant = new Restaurant();
-        restaurant.setId(1L);
-        restaurant.setIdOwner("1");
+        dish.setId(1L);
+        dish.setActive(false);
+        when(dishPersistencePort.findById(dish.getId())).thenReturn(dish);
 
-        when(dishPersistencePort.findById(dishId)).thenReturn(dish);
-        when(userServicePort.getCurrentUserId()).thenReturn("1");
-        when(restaurantPersistencePort.getRestaurant(1L)).thenReturn(restaurant);
+        dishUseCase.changeStateDish(dish.getId());
 
-        // Act
-        dishUseCase.changeStateDish(dishId);
-
-        // Assert
-        assertFalse(dish.getActive());
-        verify(dishPersistencePort, times(1)).saveDish(dish);
+        assertTrue(dish.getActive());
+        verify(dishPersistencePort).saveDish(dish);
     }
 }
