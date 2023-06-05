@@ -34,7 +34,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
         String token = authorizationUtil.getUserToken();
 
         if(!Objects.equals(userClient.getUserRole(restaurant.getIdOwner(), token), "ROLE_OWNER")) {
-            throw new UserNotOwnerException();
+            throw new UserNotOwnerException("Field idOwner is not an id of owner user");
         }
 
         restaurantPersistencePort.saveRestaurant(restaurant);
