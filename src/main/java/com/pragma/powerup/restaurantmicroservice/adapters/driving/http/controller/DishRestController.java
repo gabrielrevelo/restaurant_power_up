@@ -4,6 +4,7 @@ import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.dto.reque
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.dto.request.DishUpdateDto;
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.handlers.IDishHandler;
 import com.pragma.powerup.restaurantmicroservice.configuration.Constants;
+import com.pragma.powerup.restaurantmicroservice.configuration.response.SuccessfulApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,9 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/dish/")
@@ -33,11 +31,11 @@ public class DishRestController {
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
     @PostMapping()
     @SecurityRequirement(name = "jwt")
-    public ResponseEntity<Map<String, String>> saveDish(@Valid @RequestBody DishRequestDto dishRequestDto) {
+    public ResponseEntity<SuccessfulApiResponse<Void>> saveDish(@Valid @RequestBody DishRequestDto dishRequestDto) {
         dishHandler.saveDish(dishRequestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, Constants.DISH_CREATED_MESSAGE));
+                .body(new SuccessfulApiResponse<>(Constants.DISH_CREATED_MESSAGE));
     }
 
     @Operation(summary = "Update a Dish",
@@ -48,22 +46,22 @@ public class DishRestController {
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
     @PatchMapping("/{id}")
     @SecurityRequirement(name = "jwt")
-    public ResponseEntity<Map<String, String>> updateDish(
+    public ResponseEntity<SuccessfulApiResponse<Void>> updateDish(
             @PathVariable("id") Long dishId,
             @Valid @RequestBody DishUpdateDto dishUpdateDto) {
         dishHandler.updateDish(dishId, dishUpdateDto);
 
         return ResponseEntity.ok()
-                .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, Constants.DISH_UPDATED_MESSAGE));
+                .body(new SuccessfulApiResponse<>(Constants.DISH_UPDATED_MESSAGE));
     }
 
     @PatchMapping("state/{id}")
     @SecurityRequirement(name = "jwt")
-    public ResponseEntity<Map<String, String>> changeStateDish(
+    public ResponseEntity<SuccessfulApiResponse<Void>> changeStateDish(
             @PathVariable("id") Long dishId) {
         dishHandler.changeStateDish(dishId);
 
         return ResponseEntity.ok()
-                .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, Constants.DISH_CHANGED_STATE_MESSAGE));
+                .body(new SuccessfulApiResponse<>(Constants.DISH_CHANGED_STATE_MESSAGE));
     }
 }

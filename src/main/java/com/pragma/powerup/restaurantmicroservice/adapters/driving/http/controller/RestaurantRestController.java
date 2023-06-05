@@ -17,10 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/restaurant")
@@ -37,18 +34,22 @@ public class RestaurantRestController {
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
     @PostMapping()
     @SecurityRequirement(name = "jwt")
-    public ResponseEntity<Map<String, String>> saveRestaurant(@Valid @RequestBody RestaurantRequestDto restaurantRequestDto) {
+    public ResponseEntity<SuccessfulApiResponse<Void>> saveRestaurant(@Valid @RequestBody RestaurantRequestDto restaurantRequestDto) {
         restaurantHandler.saveRestaurant(restaurantRequestDto);
+
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Collections.singletonMap(Constants.RESPONSE_MESSAGE_KEY, Constants.RESTAURANT_CREATED_MESSAGE));
+                .body(new SuccessfulApiResponse<>(Constants.RESTAURANT_CREATED_MESSAGE));
     }
 
     @GetMapping("/list")
     @SecurityRequirement(name = "jwt")
-    public ResponseEntity<List<RestaurantResponseDto>> getRestaurants(
+    public ResponseEntity<SuccessfulApiResponse<List<RestaurantResponseDto>>> getRestaurants(
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "1") int pageNumber) {
-        return ResponseEntity.ok(restaurantHandler.listRestaurants(pageSize, pageNumber));
+        List<RestaurantResponseDto> restaurantList = restaurantHandler.listRestaurants(pageSize, pageNumber);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new SuccessfulApiResponse<>(restaurantList));
     }
 
     @Operation(summary = "Register a new Employee in a Restaurant",
