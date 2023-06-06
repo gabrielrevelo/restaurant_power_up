@@ -13,6 +13,14 @@ public class Dish {
     public Dish() {
     }
 
+    public Dish(Long id, String name, Category category, Long idRestaurant, Boolean active) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.idRestaurant = idRestaurant;
+        this.active = active;
+    }
+
     public Dish(Long id, String name, Category category, String description, Double price, Long idRestaurant, String urlImage, Boolean active) {
         this.id = id;
         this.name = name;
