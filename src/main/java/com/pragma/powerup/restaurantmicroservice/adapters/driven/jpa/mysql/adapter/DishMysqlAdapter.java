@@ -7,6 +7,9 @@ import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.repos
 import com.pragma.powerup.restaurantmicroservice.domain.model.Dish;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IDishPersistencePort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 public class DishMysqlAdapter implements IDishPersistencePort {
@@ -23,5 +26,15 @@ public class DishMysqlAdapter implements IDishPersistencePort {
     public Dish findById(Long id) {
         DishEntity dishEntity = dishRepository.findById(id).orElseThrow(DishNotFoundException::new);
         return dishEntityMapper.toDomain(dishEntity);
+    }
+
+    @Override
+    public List<Dish> listDishes(Long idRestaurant, Long categoryId, Pageable pageable) {
+        if (categoryId == null) {
+            return dishEntityMapper.toDomainList(
+                    dishRepository.findAllByIdRestaurantOrderByNameAsc(idRestaurant, pageable).getContent());
+        }
+        return dishEntityMapper.toDomainList(
+                dishRepository.findAllByIdRestaurantAndCategoryIdOrderByNameAsc(idRestaurant, categoryId, pageable).getContent());
     }
 }
