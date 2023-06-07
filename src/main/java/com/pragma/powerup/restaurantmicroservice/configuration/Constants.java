@@ -1,7 +1,6 @@
 package com.pragma.powerup.restaurantmicroservice.configuration;
 
 public class Constants {
-
     private Constants() {
         throw new IllegalStateException("Utility class");
     }
@@ -40,4 +39,5 @@ public class Constants {
     public static final String DISH_UPDATED_MESSAGE = "Dish updated successfully";
     public static final String ACCESS_DENIED_MESSAGE = "Access denied. Insufficient permissions.";
     public static final String DISH_CHANGED_STATE_MESSAGE = "Dish state changed successfully";
+    public static final String ORDER_IN_PROGRESS_MESSAGE = "Order in progress for this user";
 }
