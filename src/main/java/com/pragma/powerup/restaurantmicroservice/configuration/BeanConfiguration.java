@@ -45,7 +45,7 @@ public class BeanConfiguration {
 
     @Bean
     public AuthorizationUtil authorizationUtil() {
-        return new AuthorizationUtil(restaurantPersistencePort(), userServicePort());
+        return new AuthorizationUtil(restaurantPersistencePort(), employeeRestaurantPersistencePort(), userServicePort());
     }
 
     @Bean

@@ -15,4 +15,10 @@ public class EmployeeRestaurantMysqlAdapter implements IEmployeeRestaurantPersis
         EmployeeRestaurantEntity employeeRestaurantEntity = new EmployeeRestaurantEntity(idEmployee, idRestaurant);
         employeeRestaurantRepository.save(employeeRestaurantEntity);
     }
+
+    @Override
+    public Long findRestaurantIdByEmployeeId(Long idEmployee) {
+        EmployeeRestaurantEntity employeeRestaurantEntity = employeeRestaurantRepository.findById(idEmployee).orElseThrow(RuntimeException::new);
+        return employeeRestaurantEntity.getIdRestaurant();
+    }
 }

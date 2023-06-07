@@ -9,6 +9,9 @@ import com.pragma.powerup.restaurantmicroservice.domain.model.Order;
 import com.pragma.powerup.restaurantmicroservice.domain.model.OrderStatus;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IOrderPersistencePort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 public class OrderMysqlAdapter implements IOrderPersistencePort {
@@ -23,9 +26,8 @@ public class OrderMysqlAdapter implements IOrderPersistencePort {
         OrderEntity orderSaved = orderRepository.save(orderEntityMapper.toEntity(order));
         order.getMenuSelections().stream()
                 .map(menuSelection -> new OrderDishEntity(
-                        new OrderDishEntity.OrderDishId(
-                                orderSaved.getId(),
-                                menuSelection.getIdDish()),
+                        orderSaved.getId(),
+                        menuSelection.getIdDish(),
                         menuSelection.getQuantity()))
                 .forEach(orderDishRepository::save);
     }
@@ -33,5 +35,16 @@ public class OrderMysqlAdapter implements IOrderPersistencePort {
     @Override
     public Boolean existsOrderInProcess(Long idClient) {
         return orderRepository.existsByIdClientAndStatusNot(idClient, OrderStatus.DELIVERED.name());
+    }
+
+    @Override
+    public List<Order> listOrders(String status, Long idRestaurant, Pageable pageable) {
+        List<OrderEntity> orderEntityList = orderRepository.findAllByStatusAndIdRestaurant(status, idRestaurant, pageable).getContent();
+        List<Order> orderDomainList = orderEntityMapper.toDomainList(orderEntityList);
+        orderDomainList.forEach(order -> {
+            List<OrderDishEntity> orderDishEntityList = orderDishRepository.findByIdOrder(order.getId());
+            order.setMenuSelections(orderEntityMapper.toDomainMenuSelectionsList(orderDishEntityList));
+        });
+        return orderDomainList;
     }
 }

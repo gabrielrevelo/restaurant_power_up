@@ -6,7 +6,10 @@ import com.pragma.powerup.restaurantmicroservice.domain.model.Order;
 import com.pragma.powerup.restaurantmicroservice.domain.model.OrderStatus;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IOrderPersistencePort;
 import com.pragma.powerup.restaurantmicroservice.domain.util.AuthorizationUtil;
+import org.springframework.data.domain.Pageable;
+
 import java.time.LocalDate;
+import java.util.List;
 
 public class OrderUseCase implements IOrderServicePort {
 
@@ -28,5 +31,11 @@ public class OrderUseCase implements IOrderServicePort {
         order.setDate(LocalDate.now());
         order.setStatus(OrderStatus.PENDING);
         orderPersistencePort.createOrder(order);
+    }
+
+    @Override
+    public List<Order> listOrders(OrderStatus status, Pageable pageable) {
+        Long idRestaurant = authorizationUtil.getCurrentEmployeeRestaurantId();
+        return orderPersistencePort.listOrders(status.name(), idRestaurant ,pageable);
     }
 }

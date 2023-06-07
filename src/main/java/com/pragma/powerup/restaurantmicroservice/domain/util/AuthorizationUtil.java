@@ -3,15 +3,18 @@ package com.pragma.powerup.restaurantmicroservice.domain.util;
 import com.pragma.powerup.restaurantmicroservice.domain.api.ICurrentUserServicePort;
 import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
+import com.pragma.powerup.restaurantmicroservice.domain.spi.IEmployeeRestaurantPersistencePort;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
 
 public class AuthorizationUtil {
 
     private final IRestaurantPersistencePort restaurantPersistencePort;
+    private final IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort;
     private final ICurrentUserServicePort currentUserServicePort;
 
-    public AuthorizationUtil(IRestaurantPersistencePort restaurantPersistencePort, ICurrentUserServicePort currentUserServicePort) {
+    public AuthorizationUtil(IRestaurantPersistencePort restaurantPersistencePort, IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort, ICurrentUserServicePort currentUserServicePort) {
         this.restaurantPersistencePort = restaurantPersistencePort;
+        this.employeeRestaurantPersistencePort = employeeRestaurantPersistencePort;
         this.currentUserServicePort = currentUserServicePort;
     }
 
@@ -29,5 +32,9 @@ public class AuthorizationUtil {
 
     public Long getCurrentUserId() {
         return Long.valueOf(currentUserServicePort.getCurrentUserId());
+    }
+
+    public Long getCurrentEmployeeRestaurantId() {
+        return employeeRestaurantPersistencePort.findRestaurantIdByEmployeeId(getCurrentUserId());
     }
 }
