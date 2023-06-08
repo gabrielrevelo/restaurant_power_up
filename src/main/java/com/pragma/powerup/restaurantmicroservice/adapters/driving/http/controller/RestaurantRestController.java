@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/restaurant")
+@RequestMapping("/restaurants")
 @RequiredArgsConstructor
 public class RestaurantRestController {
 
@@ -41,7 +41,7 @@ public class RestaurantRestController {
                 .body(new SuccessfulApiResponse<>(Constants.RESTAURANT_CREATED_MESSAGE));
     }
 
-    @GetMapping("/list")
+    @GetMapping("")
     @SecurityRequirement(name = "jwt")
     public ResponseEntity<SuccessfulApiResponse<List<RestaurantResponseDto>>> getRestaurants(
             @RequestParam(defaultValue = "10") int pageSize,

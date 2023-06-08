@@ -1,5 +1,6 @@
 package com.pragma.powerup.restaurantmicroservice.domain.usecase;
 
+import com.pragma.powerup.restaurantmicroservice.configuration.Constants;
 import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Employee;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
@@ -43,7 +44,7 @@ class RestaurantUseCaseTest {
         String ownerId = "1";
         Restaurant restaurant = new Restaurant();
         restaurant.setIdOwner(ownerId);
-        when(userClient.getUserRole(ownerId, null)).thenReturn("ROLE_OWNER");
+        when(userClient.getIdUserRole(ownerId, null)).thenReturn(Constants.OWNER_ROLE_ID);
 
         restaurantUseCase.saveRestaurant(restaurant);
 
@@ -56,7 +57,7 @@ class RestaurantUseCaseTest {
         String ownerId = "1";
         Restaurant restaurant = new Restaurant();
         restaurant.setIdOwner(ownerId);
-        when(userClient.getUserRole(ownerId, null)).thenReturn("ROLE_ADMIN");
+        when(userClient.getIdUserRole(ownerId, null)).thenReturn(Constants.ADMIN_ROLE_ID);
 
         assertThrows(UserNotOwnerException.class, () -> restaurantUseCase.saveRestaurant(restaurant));
         verify(restaurantPersistencePort, never()).saveRestaurant(restaurant);

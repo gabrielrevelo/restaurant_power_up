@@ -22,7 +22,7 @@ public class DishEntity {
     private CategoryEntity category;
     private String description;
     private Double price;
-    private String idRestaurant;
+    private Long idRestaurant;
     private String urlImage;
     private Boolean active;
 }
