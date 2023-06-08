@@ -11,12 +11,14 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Data
+@IdClass(OrderDishEntity.OrderDishId.class)
 public class OrderDishEntity {
-    @EmbeddedId
-    private OrderDishId id;
+    @Id
+    private Long idDish;
+    @Id
+    private Long idOrder;
     private Integer quantity;
 
-    @Embeddable
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

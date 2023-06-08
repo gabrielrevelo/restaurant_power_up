@@ -70,7 +70,7 @@ public class DishRestController {
 
     @GetMapping("/restaurant/{idRestaurant}")
     @SecurityRequirement(name = "jwt")
-    public ResponseEntity<SuccessfulApiResponse<List<DishResponseDto>>> getRestaurants(
+    public ResponseEntity<SuccessfulApiResponse<List<DishResponseDto>>> listDishes(
             @PathVariable Long idRestaurant,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(defaultValue = "1") int pageNumber,
