@@ -24,10 +24,6 @@ class DishUseCaseTest {
     @Mock
     private IDishPersistencePort dishPersistencePort;
     @Mock
-    private IRestaurantPersistencePort restaurantPersistencePort;
-    @Mock
-    private ICurrentUserServicePort userServicePort;
-    @Mock
     private AuthorizationUtil authorizationUtil;
 
     private DishUseCase dishUseCase;

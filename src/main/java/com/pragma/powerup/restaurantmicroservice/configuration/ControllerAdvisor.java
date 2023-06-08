@@ -5,6 +5,7 @@ import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.excep
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.exceptions.EmployeeCreationException;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.exceptions.UserRoleNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.configuration.response.ErrorApiResponse;
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.OrderInProgressException;
 import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -81,5 +82,11 @@ public class ControllerAdvisor {
     public ResponseEntity<Object> handleEmployeeCreationException(EmployeeCreationException employeeCreationException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorApiResponse(employeeCreationException.getMessage()));
+    }
+
+    @ExceptionHandler(OrderInProgressException.class)
+    public ResponseEntity<Object> handleOrderInProgressException(OrderInProgressException orderInProgressException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorApiResponse(Constants.ORDER_IN_PROGRESS_MESSAGE));
     }
 }

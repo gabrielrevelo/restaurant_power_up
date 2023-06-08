@@ -26,4 +26,8 @@ public class AuthorizationUtil {
     public String getUserToken() {
         return currentUserServicePort.getCurrentUserToken();
     }
+
+    public Long getCurrentUserId() {
+        return Long.valueOf(currentUserServicePort.getCurrentUserId());
+    }
 }
