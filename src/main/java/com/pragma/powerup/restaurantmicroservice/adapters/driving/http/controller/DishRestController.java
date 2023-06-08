@@ -58,7 +58,7 @@ public class DishRestController {
                 .body(new SuccessfulApiResponse<>(Constants.DISH_UPDATED_MESSAGE));
     }
 
-    @PatchMapping("state/{id}")
+    @PatchMapping("{id}/state")
     @SecurityRequirement(name = "jwt")
     public ResponseEntity<SuccessfulApiResponse<Void>> changeStateDish(
             @PathVariable("id") Long dishId) {
@@ -75,6 +75,7 @@ public class DishRestController {
             @RequestParam(required = false) Long categoryId,
             @RequestParam(defaultValue = "1") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize) {
+        //Todo Move pageable to a handler
         Pageable pageable = Pageable.ofSize(pageSize).withPage(pageNumber - 1);
         List<DishResponseDto> dishList = dishHandler.listDishes(idRestaurant, categoryId, pageable);
 

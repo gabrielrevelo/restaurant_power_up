@@ -13,6 +13,7 @@ public class Constants {
     public static final String RESPONSE_MESSAGE_KEY = "message";
     public static final String RESTAURANT_CREATED_MESSAGE = "Restaurant created successfully";
     public static final String DISH_CREATED_MESSAGE = "Dish created successfully";
+    public static final String ORDER_CREATED_MESSAGE = "Order created successfully";
     public static final String USER_CREATED_MESSAGE = "User created successfully";
     public static final String USER_DELETED_MESSAGE = "User deleted successfully";
     public static final String RESPONSE_ERROR_MESSAGE_KEY = "error";
@@ -25,6 +26,7 @@ public class Constants {
     public static final String ROLE_NOT_ALLOWED_MESSAGE = "No permission granted to create users with this role";
     public static final String USER_ALREADY_EXISTS_MESSAGE = "A user already exists with the role provided";
     public static final String USER_NOT_FOUND_MESSAGE = "No user found";
+    public static final String ORDER_NOT_FOUND_MESSAGE = "No order found";
     public static final String RESTAURANT_NOT_FOUND_MESSAGE = "No restaurant found";
     public static final String DISH_NOT_FOUND_MESSAGE = "No dish found";
     public static final String SWAGGER_TITLE_MESSAGE = "Restaurant API Pragma Power Up";
@@ -40,4 +42,5 @@ public class Constants {
     public static final String ACCESS_DENIED_MESSAGE = "Access denied. Insufficient permissions.";
     public static final String DISH_CHANGED_STATE_MESSAGE = "Dish state changed successfully";
     public static final String ORDER_IN_PROGRESS_MESSAGE = "Order in progress for this user";
+    public static final String ORDER_NOT_RESTAURANT_EMPLOYEE_MESSAGE = "Order not belong to restaurant employee";
 }

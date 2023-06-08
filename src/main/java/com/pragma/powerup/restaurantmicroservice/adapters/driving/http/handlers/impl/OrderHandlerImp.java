@@ -27,4 +27,9 @@ public class OrderHandlerImp implements IOrderHandler {
     public List<OrderResponseDto> listOrders(OrderStatus status, Pageable pageable) {
         return orderRequestMapper.toOrderResponseDtoList(orderServicePort.listOrders(status, pageable));
     }
+
+    @Override
+    public void assignOrder(Long idOrder) {
+        orderServicePort.assignOrder(idOrder);
+    }
 }

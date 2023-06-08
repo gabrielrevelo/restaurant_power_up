@@ -1,7 +1,7 @@
 package com.pragma.powerup.restaurantmicroservice.domain.usecase;
 
-import com.pragma.powerup.restaurantmicroservice.domain.exceptions.OrderInProgressException;
-import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.ClientOrderInProgressException;
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.OrderNotRestaurantEmployeeException;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Order;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Order.MenuSelection;
 import com.pragma.powerup.restaurantmicroservice.domain.model.OrderStatus;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -54,7 +53,7 @@ class OrderUseCaseTest {
         assertEquals(idClient, order.getIdClient());
         assertEquals(LocalDate.now(), order.getDate());
         assertEquals(OrderStatus.PENDING, order.getStatus());
-        verify(orderPersistencePort).createOrder(order);
+        verify(orderPersistencePort).saveOrder(order);
     }
 
     @Test
@@ -70,8 +69,8 @@ class OrderUseCaseTest {
         when(authorizationUtil.getCurrentUserId()).thenReturn(idClient);
         when(orderPersistencePort.existsOrderInProcess(idClient)).thenReturn(true);
 
-        assertThrows(OrderInProgressException.class, () -> orderUseCase.createOrder(order));
-        verify(orderPersistencePort, never()).createOrder(order);
+        assertThrows(ClientOrderInProgressException.class, () -> orderUseCase.createOrder(order));
+        verify(orderPersistencePort, never()).saveOrder(order);
     }
 
     @Test
@@ -90,5 +89,38 @@ class OrderUseCaseTest {
         assertEquals(expectedOrders, result);
         verify(authorizationUtil).getCurrentEmployeeRestaurantId();
         verify(orderPersistencePort).listOrders(status.name(), restaurantId, null);
+    }
+
+    @Test
+    void assignOrder() {
+        Long idOrder = 1L;
+        Long idRestaurant = 1L;
+        Long idEmployee = 1L;
+        Order order = new Order();
+        order.setId(idOrder);
+        order.setIdRestaurant(idRestaurant);
+        when(orderPersistencePort.getOrder(idOrder)).thenReturn(order);
+        when(authorizationUtil.getCurrentEmployeeRestaurantId()).thenReturn(idRestaurant);
+        when(authorizationUtil.getCurrentUserId()).thenReturn(idEmployee);
+
+        orderUseCase.assignOrder(idOrder);
+
+        assertEquals(idEmployee, order.getIdChef());
+        assertEquals(OrderStatus.IN_PREPARATION, order.getStatus());
+        verify(orderPersistencePort).saveOrder(order);
+    }
+    @Test
+    void assignOrder_NotEmployeeOfRestaurant() {
+        Long idOrder = 1L;
+        Long idRestaurantThisOrder = 1L;
+        Long idRestaurantCurrentEmployee = 2L;
+        Order order = new Order();
+        order.setId(idOrder);
+        order.setIdRestaurant(idRestaurantThisOrder);
+        when(orderPersistencePort.getOrder(idOrder)).thenReturn(order);
+        when(authorizationUtil.getCurrentEmployeeRestaurantId()).thenReturn(idRestaurantCurrentEmployee);
+
+        assertThrows(OrderNotRestaurantEmployeeException.class, () -> orderUseCase.assignOrder(idOrder));
+        verify(orderPersistencePort, never()).saveOrder(order);
     }
 }

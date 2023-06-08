@@ -1,7 +1,8 @@
 package com.pragma.powerup.restaurantmicroservice.domain.usecase;
 
 import com.pragma.powerup.restaurantmicroservice.domain.api.IOrderServicePort;
-import com.pragma.powerup.restaurantmicroservice.domain.exceptions.OrderInProgressException;
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.ClientOrderInProgressException;
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.OrderNotRestaurantEmployeeException;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Order;
 import com.pragma.powerup.restaurantmicroservice.domain.model.OrderStatus;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IOrderPersistencePort;
@@ -23,19 +24,32 @@ public class OrderUseCase implements IOrderServicePort {
 
     @Override
     public void createOrder(Order order) {
-        Long currentUserId = authorizationUtil.getCurrentUserId();
-        if (Boolean.TRUE.equals(orderPersistencePort.existsOrderInProcess(currentUserId))) {
-            throw new OrderInProgressException();
+        Long currentClientId = authorizationUtil.getCurrentUserId();
+        if (Boolean.TRUE.equals(orderPersistencePort.existsOrderInProcess(currentClientId))) {
+            throw new ClientOrderInProgressException();
         }
-        order.setIdClient(currentUserId);
+        order.setIdClient(currentClientId);
         order.setDate(LocalDate.now());
         order.setStatus(OrderStatus.PENDING);
-        orderPersistencePort.createOrder(order);
+        orderPersistencePort.saveOrder(order);
     }
 
     @Override
     public List<Order> listOrders(OrderStatus status, Pageable pageable) {
-        Long idRestaurant = authorizationUtil.getCurrentEmployeeRestaurantId();
-        return orderPersistencePort.listOrders(status.name(), idRestaurant ,pageable);
+        Long idRestaurantOfEmployee = authorizationUtil.getCurrentEmployeeRestaurantId();
+        return orderPersistencePort.listOrders(status.name(), idRestaurantOfEmployee ,pageable);
+    }
+
+    @Override
+    public void assignOrder(Long idOrder) {
+        Order order = orderPersistencePort.getOrder(idOrder);
+        Long idRestaurantOfEmployee = authorizationUtil.getCurrentEmployeeRestaurantId();
+        if (!order.getIdRestaurant().equals(idRestaurantOfEmployee)) {
+            throw new OrderNotRestaurantEmployeeException();
+        }
+        Long currentEmployeeId = authorizationUtil.getCurrentUserId();
+        order.setIdChef(currentEmployeeId);
+        order.setStatus(OrderStatus.IN_PREPARATION);
+        orderPersistencePort.saveOrder(order);
     }
 }
