@@ -11,4 +11,6 @@ public interface IOrderHandler {
     void createOrder(OrderRequestDto orderRequestDto);
 
     List<OrderResponseDto> listOrders(OrderStatus status, Pageable pageable);
+
+    void assignOrder(Long idOrder);
 }

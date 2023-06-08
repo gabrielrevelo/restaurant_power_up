@@ -2,6 +2,7 @@ package com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.adap
 
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.entity.OrderDishEntity;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.entity.OrderEntity;
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.exceptions.OrderNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.mappers.IOrderEntityMapper;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.repositories.IOrderDishRepository;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.repositories.IOrderRepository;
@@ -22,14 +23,16 @@ public class OrderMysqlAdapter implements IOrderPersistencePort {
     private final IOrderEntityMapper orderEntityMapper;
 
     @Override
-    public void createOrder(Order order) {
+    public void saveOrder(Order order) {
         OrderEntity orderSaved = orderRepository.save(orderEntityMapper.toEntity(order));
-        order.getMenuSelections().stream()
-                .map(menuSelection -> new OrderDishEntity(
-                        orderSaved.getId(),
-                        menuSelection.getIdDish(),
-                        menuSelection.getQuantity()))
-                .forEach(orderDishRepository::save);
+        if (order.getMenuSelections() != null) {
+            order.getMenuSelections().stream()
+                    .map(menuSelection -> new OrderDishEntity(
+                            orderSaved.getId(),
+                            menuSelection.getIdDish(),
+                            menuSelection.getQuantity()))
+                    .forEach(orderDishRepository::save);
+        }
     }
 
     @Override
@@ -46,5 +49,11 @@ public class OrderMysqlAdapter implements IOrderPersistencePort {
             order.setMenuSelections(orderEntityMapper.toDomainMenuSelectionsList(orderDishEntityList));
         });
         return orderDomainList;
+    }
+
+    @Override
+    public Order getOrder(Long idOrder) {
+        OrderEntity orderEntity = orderRepository.findById(idOrder).orElseThrow(OrderNotFoundException::new);
+        return orderEntityMapper.toDomain(orderEntity);
     }
 }

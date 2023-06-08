@@ -30,7 +30,7 @@ public class OrderRestController {
         orderHandler.createOrder(orderRequestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new SuccessfulApiResponse<>(Constants.DISH_CREATED_MESSAGE));
+                .body(new SuccessfulApiResponse<>(Constants.ORDER_CREATED_MESSAGE));
     }
 
     @GetMapping()
@@ -44,6 +44,17 @@ public class OrderRestController {
         List<OrderResponseDto> orders = orderHandler.listOrders(status, pageable);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new SuccessfulApiResponse<>(Constants.DISH_CREATED_MESSAGE, orders));
+                .body(new SuccessfulApiResponse<>(orders));
+    }
+
+    @PatchMapping("/{idOrder}/assign")
+    @SecurityRequirement(name = "jwt")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<SuccessfulApiResponse<List<OrderResponseDto>>> assignOrder(
+            @PathVariable Long idOrder) {
+        orderHandler.assignOrder(idOrder);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new SuccessfulApiResponse<>("Order assigned successfully"));
     }
 }

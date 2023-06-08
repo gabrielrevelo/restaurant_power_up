@@ -1,11 +1,13 @@
 package com.pragma.powerup.restaurantmicroservice.configuration;
 
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.exceptions.DishNotFoundException;
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.exceptions.OrderNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.exceptions.RestaurantNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.exceptions.EmployeeCreationException;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.exceptions.UserRoleNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.configuration.response.ErrorApiResponse;
-import com.pragma.powerup.restaurantmicroservice.domain.exceptions.OrderInProgressException;
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.ClientOrderInProgressException;
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.OrderNotRestaurantEmployeeException;
 import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -84,9 +86,22 @@ public class ControllerAdvisor {
                 .body(new ErrorApiResponse(employeeCreationException.getMessage()));
     }
 
-    @ExceptionHandler(OrderInProgressException.class)
-    public ResponseEntity<Object> handleOrderInProgressException(OrderInProgressException orderInProgressException) {
+    @ExceptionHandler(ClientOrderInProgressException.class)
+    public ResponseEntity<Object> handleOrderInProgressException(ClientOrderInProgressException clientOrderInProgressException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorApiResponse(Constants.ORDER_IN_PROGRESS_MESSAGE));
     }
+
+    @ExceptionHandler(OrderNotRestaurantEmployeeException.class)
+    public ResponseEntity<ErrorApiResponse> handleOrderNotRestaurantEmployeeException() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorApiResponse(Constants.ORDER_NOT_RESTAURANT_EMPLOYEE_MESSAGE));
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ErrorApiResponse> handleOrderNotFoundException() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorApiResponse(Constants.ORDER_NOT_FOUND_MESSAGE));
+    }
+
 }
