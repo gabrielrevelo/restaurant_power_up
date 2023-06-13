@@ -28,6 +28,7 @@ public class Constants {
     public static final String USER_NOT_FOUND_MESSAGE = "No user found";
     public static final String ORDER_NOT_FOUND_MESSAGE = "No order found";
     public static final String ORDER_NOT_READY_MESSAGE = "Order not ready";
+    public static final String ORDER_NOT_BELONG_CLIENT_MESSAGE = "Order not belong to client";
     public static final String RESTAURANT_NOT_FOUND_MESSAGE = "No restaurant found";
     public static final String DISH_NOT_FOUND_MESSAGE = "No dish found";
     public static final String SWAGGER_TITLE_MESSAGE = "Restaurant API Pragma Power Up";

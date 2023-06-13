@@ -90,7 +90,7 @@ public class ControllerAdvisor {
                 .body(new ErrorApiResponse(Constants.ORDER_IN_PROGRESS_MESSAGE));
     }
 
-    @ExceptionHandler(OrderNotRestaurantEmployeeException.class)
+    @ExceptionHandler(OrderNotEmployeeOfRestaurantException.class)
     public ResponseEntity<ErrorApiResponse> handleOrderNotRestaurantEmployeeException() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorApiResponse(Constants.ORDER_NOT_RESTAURANT_EMPLOYEE_MESSAGE));
@@ -106,6 +106,18 @@ public class ControllerAdvisor {
     public ResponseEntity<ErrorApiResponse> handleOrderNotReadyException(OrderNotReadyException orderNotReadyException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorApiResponse(Constants.ORDER_NOT_READY_MESSAGE + " (" + orderNotReadyException.getMessage() + ")"));
+    }
+
+    @ExceptionHandler(OrderNotPendingException.class)
+    public ResponseEntity<ErrorApiResponse> handleOrderNotPendingException(OrderNotPendingException orderNotPendingException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorApiResponse(Constants.ORDER_NOT_READY_MESSAGE + " (" + orderNotPendingException.getMessage() + ")"));
+    }
+
+    @ExceptionHandler(OrderNotBelongClientException.class)
+    public ResponseEntity<ErrorApiResponse> handleOrderNotBelongClientException() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorApiResponse(ORDER_NOT_BELONG_CLIENT_MESSAGE));
     }
 
     @ExceptionHandler(InvalidSecurityCodeException.class)

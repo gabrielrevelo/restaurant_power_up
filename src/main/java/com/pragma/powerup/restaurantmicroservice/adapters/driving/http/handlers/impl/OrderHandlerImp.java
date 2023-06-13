@@ -42,4 +42,9 @@ public class OrderHandlerImp implements IOrderHandler {
     public void orderDelivered(Long idOrder, String securityCode) {
         orderServicePort.orderDelivered(idOrder, securityCode);
     }
+
+    @Override
+    public void cancelOrder(Long idOrder) {
+        orderServicePort.cancelOrder(idOrder);
+    }
 }
