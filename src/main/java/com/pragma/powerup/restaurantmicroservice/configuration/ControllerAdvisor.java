@@ -6,9 +6,7 @@ import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.excep
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.userclient.exceptions.EmployeeCreationException;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.userclient.exceptions.UserRoleNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.configuration.response.ErrorApiResponse;
-import com.pragma.powerup.restaurantmicroservice.domain.exceptions.ClientOrderInProgressException;
-import com.pragma.powerup.restaurantmicroservice.domain.exceptions.OrderNotRestaurantEmployeeException;
-import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
  import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -87,7 +85,7 @@ public class ControllerAdvisor {
     }
 
     @ExceptionHandler(ClientOrderInProgressException.class)
-    public ResponseEntity<Object> handleOrderInProgressException(ClientOrderInProgressException clientOrderInProgressException) {
+    public ResponseEntity<Object> handleOrderInProgressException() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorApiResponse(Constants.ORDER_IN_PROGRESS_MESSAGE));
     }
@@ -104,4 +102,15 @@ public class ControllerAdvisor {
                 .body(new ErrorApiResponse(Constants.ORDER_NOT_FOUND_MESSAGE));
     }
 
+    @ExceptionHandler(OrderNotReadyException.class)
+    public ResponseEntity<ErrorApiResponse> handleOrderNotReadyException(OrderNotReadyException orderNotReadyException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorApiResponse(Constants.ORDER_NOT_READY_MESSAGE + " (" + orderNotReadyException.getMessage() + ")"));
+    }
+
+    @ExceptionHandler(InvalidSecurityCodeException.class)
+    public ResponseEntity<ErrorApiResponse> handleInvalidSecurityCodeException() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorApiResponse(INVALID_SECURITY_CODE_ORDER_MESSAGE));
+    }
 }

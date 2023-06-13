@@ -15,4 +15,6 @@ public interface IOrderHandler {
     void assignOrder(Long idOrder);
 
     void orderReady(Long idOrder);
+
+    void orderDelivered(Long idOrder, String securityCode);
 }

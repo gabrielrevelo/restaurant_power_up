@@ -2,6 +2,8 @@ package com.pragma.powerup.restaurantmicroservice.domain.usecase;
 
 import com.pragma.powerup.restaurantmicroservice.domain.api.IOrderServicePort;
 import com.pragma.powerup.restaurantmicroservice.domain.exceptions.ClientOrderInProgressException;
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.InvalidSecurityCodeException;
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.OrderNotReadyException;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Order;
 import com.pragma.powerup.restaurantmicroservice.domain.model.OrderStatus;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IOrderPersistencePort;
@@ -64,6 +66,21 @@ public class OrderUseCase implements IOrderServicePort {
         String code = SecurityCodeGenerator.generateCode();
         order.setSecurityCode(code);
         smsClient.sendSms(order.getPhoneClient(), code, authUtil.getCurrentUserToken());
+        orderPersistencePort.saveOrder(order);
+    }
+
+    @Override
+    public void orderDelivered(Long idOrder, String securityCode) {
+        Order order = orderPersistencePort.getOrder(idOrder);
+        Long idRestaurantOfEmployee = authUtil.getCurrentEmployeeRestaurantId();
+        authUtil.checkEmployeeOfRestaurant(order.getIdRestaurant(), idRestaurantOfEmployee);
+        if (order.getStatus() != OrderStatus.READY) {
+            throw new OrderNotReadyException(order.getStatus().name());
+        }
+        if (!order.getSecurityCode().equals(securityCode)) {
+            throw new InvalidSecurityCodeException();
+        }
+        order.setStatus(OrderStatus.DELIVERED);
         orderPersistencePort.saveOrder(order);
     }
 }
