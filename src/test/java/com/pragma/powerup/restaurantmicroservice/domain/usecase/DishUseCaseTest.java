@@ -1,12 +1,9 @@
 package com.pragma.powerup.restaurantmicroservice.domain.usecase;
 
-import com.pragma.powerup.restaurantmicroservice.domain.api.ICurrentUserServicePort;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Category;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Dish;
-import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IDishPersistencePort;
-import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
-import com.pragma.powerup.restaurantmicroservice.domain.util.AuthorizationUtil;
+import com.pragma.powerup.restaurantmicroservice.domain.util.AuthUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -24,14 +21,14 @@ class DishUseCaseTest {
     @Mock
     private IDishPersistencePort dishPersistencePort;
     @Mock
-    private AuthorizationUtil authorizationUtil;
+    private AuthUtil authUtil;
 
     private DishUseCase dishUseCase;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        dishUseCase = new DishUseCase(dishPersistencePort, authorizationUtil);
+        dishUseCase = new DishUseCase(dishPersistencePort, authUtil);
     }
 
     @Test

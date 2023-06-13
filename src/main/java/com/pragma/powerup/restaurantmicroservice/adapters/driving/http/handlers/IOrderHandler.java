@@ -13,4 +13,6 @@ public interface IOrderHandler {
     List<OrderResponseDto> listOrders(OrderStatus status, Pageable pageable);
 
     void assignOrder(Long idOrder);
+
+    void orderReady(Long idOrder);
 }

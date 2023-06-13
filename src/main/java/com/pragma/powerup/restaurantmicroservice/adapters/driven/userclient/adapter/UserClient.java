@@ -1,23 +1,24 @@
-package com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.adapter;
+package com.pragma.powerup.restaurantmicroservice.adapters.driven.userclient.adapter;
 
-import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.exceptions.EmployeeCreationException;
-import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.exceptions.UserRoleNotFoundException;
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.userclient.dto.RoleResponseDto;
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.userclient.dto.UserResponseDto;
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.userclient.exceptions.EmployeeCreationException;
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.userclient.exceptions.UserRoleNotFoundException;
 import com.pragma.powerup.restaurantmicroservice.configuration.response.CustomApiResponse;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Employee;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IUserClient;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class UserClient implements IUserClient {
-    private final UserMicroClient userMicroClient;
+    private final UserApiClient userApiClient;
 
-    @Autowired
-    public UserClient(UserMicroClient userMicroClient) {
-        this.userMicroClient = userMicroClient;
+    public UserClient(UserApiClient userApiClient) {
+        this.userApiClient = userApiClient;
     }
 
     public Long getIdUserRole(String userId, String token) {
         try {
-            CustomApiResponse<RoleResponseDto> responseData = userMicroClient.getUserRole(userId, "Bearer " + token);
+            CustomApiResponse<RoleResponseDto> responseData = userApiClient.getUserRole(userId, "Bearer " + token);
             RoleResponseDto roleResponseDto = responseData.getData();
             return roleResponseDto.getId();
         } catch (Exception ex) {
@@ -27,7 +28,7 @@ public class UserClient implements IUserClient {
 
     public Long createEmployee(Employee employee, String token) {
         try {
-            CustomApiResponse<UserResponseDto> responseData = userMicroClient.createEmployee(employee, "Bearer " + token);
+            CustomApiResponse<UserResponseDto> responseData = userApiClient.createEmployee(employee, "Bearer " + token);
             UserResponseDto userResponseDto = responseData.getData();
             return userResponseDto.getId();
         } catch (Exception ex) {

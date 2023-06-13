@@ -3,24 +3,23 @@ package com.pragma.powerup.restaurantmicroservice.domain.usecase;
 import com.pragma.powerup.restaurantmicroservice.domain.api.IDishServicePort;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Dish;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IDishPersistencePort;
-import com.pragma.powerup.restaurantmicroservice.domain.util.AuthorizationUtil;
+import com.pragma.powerup.restaurantmicroservice.domain.util.AuthUtil;
 import org.springframework.data.domain.Pageable;
-
 import java.util.List;
 
 public class DishUseCase implements IDishServicePort {
 
     private final IDishPersistencePort dishPersistencePort;
-    private final AuthorizationUtil authorizationUtil;
+    private final AuthUtil authUtil;
 
-    public DishUseCase(IDishPersistencePort dishPersistencePort, AuthorizationUtil authorizationUtil) {
+    public DishUseCase(IDishPersistencePort dishPersistencePort, AuthUtil authUtil) {
         this.dishPersistencePort = dishPersistencePort;
-        this.authorizationUtil = authorizationUtil;
+        this.authUtil = authUtil;
     }
 
     @Override
     public void saveDish(Dish dish) {
-        authorizationUtil.checkOwnerAuthorization(dish.getIdRestaurant());
+        authUtil.checkOwnerOfRestaurant(dish.getIdRestaurant());
 
         dish.setActive(true);
         dishPersistencePort.saveDish(dish);
@@ -29,7 +28,7 @@ public class DishUseCase implements IDishServicePort {
     @Override
     public void updateDish(Long id, Double price, String description) {
         Dish dish = dishPersistencePort.findById(id);
-        authorizationUtil.checkOwnerAuthorization(dish.getIdRestaurant());
+        authUtil.checkOwnerOfRestaurant(dish.getIdRestaurant());
 
         dish.setPrice(price);
         dish.setDescription(description);
@@ -39,7 +38,7 @@ public class DishUseCase implements IDishServicePort {
     @Override
     public void changeStateDish(Long id) {
         Dish dish = dishPersistencePort.findById(id);
-        authorizationUtil.checkOwnerAuthorization(dish.getIdRestaurant());
+        authUtil.checkOwnerOfRestaurant(dish.getIdRestaurant());
 
         dish.setActive(!dish.getActive());
         dishPersistencePort.saveDish(dish);

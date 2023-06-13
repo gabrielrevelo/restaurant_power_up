@@ -23,4 +23,5 @@ public class OrderEntity {
     private Long idChef;
     private LocalDate date;
     private String status;
+    private String phoneClient;
 }

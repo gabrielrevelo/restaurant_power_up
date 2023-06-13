@@ -11,18 +11,22 @@ public class Order {
     private Long idChef;
     private LocalDate date;
     private OrderStatus status;
+    private String phoneClient;
+    private String securityCode;
     private List<MenuSelection> menuSelections;
 
     public Order() {
     }
 
-    public Order(Long id, Long idClient, Long idRestaurant, Long idChef, LocalDate date, OrderStatus status, List<MenuSelection> menuSelections) {
+    public Order(Long id, Long idClient, Long idRestaurant, Long idChef, LocalDate date, OrderStatus status, String phoneClient, String securityCode, List<MenuSelection> menuSelections) {
         this.id = id;
         this.idClient = idClient;
         this.idRestaurant = idRestaurant;
         this.idChef = idChef;
         this.date = date;
         this.status = status;
+        this.phoneClient = phoneClient;
+        this.securityCode = securityCode;
         this.menuSelections = menuSelections;
     }
 
@@ -80,6 +84,22 @@ public class Order {
 
     public void setMenuSelections(List<MenuSelection> menuSelection) {
         this.menuSelections = menuSelection;
+    }
+
+    public String getSecurityCode() {
+        return securityCode;
+    }
+
+    public void setSecurityCode(String securityCode) {
+        this.securityCode = securityCode;
+    }
+
+    public String getPhoneClient() {
+        return phoneClient;
+    }
+
+    public void setPhoneClient(String phoneClient) {
+        this.phoneClient = phoneClient;
     }
 
     public static class MenuSelection {

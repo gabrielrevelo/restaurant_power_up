@@ -12,4 +12,6 @@ public interface IOrderServicePort {
     List<Order> listOrders(OrderStatus status, Pageable pageable);
 
     void assignOrder(Long idOrder);
+
+    void orderReady(Long idOrder);
 }

@@ -57,4 +57,15 @@ public class OrderRestController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new SuccessfulApiResponse<>("Order assigned successfully"));
     }
+
+    @PatchMapping("/{idOrder}/ready")
+    @SecurityRequirement(name = "jwt")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<SuccessfulApiResponse<List<OrderResponseDto>>> orderReady(
+            @PathVariable Long idOrder) {
+        orderHandler.orderReady(idOrder);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new SuccessfulApiResponse<>("Order ready successfully"));
+    }
 }

@@ -1,5 +1,5 @@
 server:
-  port: 9090
+  port: 8081
 
 spring:
   datasource:
@@ -21,3 +21,4 @@ management:
 
 app:
   userMicroUrlBase: "http://localhost:8080/"
+  smsMicroUrlBase: "http://localhost:8082/"

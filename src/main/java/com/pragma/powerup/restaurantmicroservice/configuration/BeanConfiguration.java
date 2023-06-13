@@ -8,8 +8,10 @@ import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.mappe
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.mappers.IOrderEntityMapper;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.mappers.IRestaurantEntityMapper;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.repositories.*;
-import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.adapter.UserClient;
-import com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.adapter.UserMicroClient;
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.smsclient.adapter.SmsApiClient;
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.smsclient.adapter.SmsClient;
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.userclient.adapter.UserApiClient;
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.userclient.adapter.UserClient;
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.HttpCurrentUserProvider;
 import com.pragma.powerup.restaurantmicroservice.domain.api.IDishServicePort;
 import com.pragma.powerup.restaurantmicroservice.domain.api.IOrderServicePort;
@@ -19,7 +21,7 @@ import com.pragma.powerup.restaurantmicroservice.domain.spi.*;
 import com.pragma.powerup.restaurantmicroservice.domain.usecase.DishUseCase;
 import com.pragma.powerup.restaurantmicroservice.domain.usecase.OrderUseCase;
 import com.pragma.powerup.restaurantmicroservice.domain.usecase.RestaurantUseCase;
-import com.pragma.powerup.restaurantmicroservice.domain.util.AuthorizationUtil;
+import com.pragma.powerup.restaurantmicroservice.domain.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +38,8 @@ public class BeanConfiguration {
     private final IOrderRepository orderRepository;
     private final IOrderDishRepository orderDishRepository;
     private final IOrderEntityMapper orderEntityMapper;
-    private final UserMicroClient userMicroClient;
+    private final UserApiClient userApiClient;
+    private final SmsApiClient smsApiClient;
 
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort() {
@@ -44,13 +47,18 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public AuthorizationUtil authorizationUtil() {
-        return new AuthorizationUtil(restaurantPersistencePort(), employeeRestaurantPersistencePort(), userServicePort());
+    public AuthUtil authorizationUtil() {
+        return new AuthUtil(restaurantPersistencePort(), employeeRestaurantPersistencePort(), userServicePort());
     }
 
     @Bean
     public IUserClient restTemplateClient() {
-        return new UserClient(userMicroClient);
+        return new UserClient(userApiClient);
+    }
+
+    @Bean
+    public ISmsClient smsClient() {
+        return new SmsClient(smsApiClient);
     }
 
     @Bean
@@ -80,7 +88,7 @@ public class BeanConfiguration {
 
     @Bean
     public IOrderServicePort orderServicePort() {
-        return new OrderUseCase(orderPersistencePort(), authorizationUtil());
+        return new OrderUseCase(orderPersistencePort(), smsClient(), authorizationUtil());
     }
 
     @Bean
