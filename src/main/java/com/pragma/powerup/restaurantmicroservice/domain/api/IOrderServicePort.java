@@ -16,7 +16,7 @@ public interface IOrderServicePort {
 
     void orderReady(Long idOrder);
 
-    void orderDelivered(Long idOrder, String securityCode);
+    void deliverOrder(Long idOrder, String securityCode);
 
     /**
      * Marks an order as CANCELED.

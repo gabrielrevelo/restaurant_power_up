@@ -18,11 +18,13 @@ public class OrderUseCase implements IOrderServicePort {
     private final IOrderPersistencePort orderPersistencePort;
     private final ISmsClient smsClient;
     private final AuthUtil authUtil;
+    private final SecurityCodeGenerator securityCodeGenerator;
 
-    public OrderUseCase(IOrderPersistencePort orderPersistencePort, ISmsClient smsClient, AuthUtil authUtil) {
+    public OrderUseCase(IOrderPersistencePort orderPersistencePort, ISmsClient smsClient, AuthUtil authUtil, SecurityCodeGenerator securityCodeGenerator) {
         this.orderPersistencePort = orderPersistencePort;
         this.smsClient = smsClient;
         this.authUtil = authUtil;
+        this.securityCodeGenerator = securityCodeGenerator;
     }
 
     @Override
@@ -62,14 +64,14 @@ public class OrderUseCase implements IOrderServicePort {
         Long idRestaurantOfEmployee = authUtil.getCurrentEmployeeRestaurantId();
         authUtil.checkEmployeeOfRestaurant(order.getIdRestaurant(), idRestaurantOfEmployee);
         order.setStatus(OrderStatus.READY);
-        String code = SecurityCodeGenerator.generateCode();
+        String code = securityCodeGenerator.generateCode();
         order.setSecurityCode(code);
         smsClient.sendSms(order.getPhoneClient(), code, authUtil.getCurrentUserToken());
         orderPersistencePort.saveOrder(order);
     }
 
     @Override
-    public void orderDelivered(Long idOrder, String securityCode) {
+    public void deliverOrder(Long idOrder, String securityCode) {
         Order order = orderPersistencePort.getOrder(idOrder);
         Long idRestaurantOfEmployee = authUtil.getCurrentEmployeeRestaurantId();
         authUtil.checkEmployeeOfRestaurant(order.getIdRestaurant(), idRestaurantOfEmployee);
