@@ -2,54 +2,68 @@ package com.pragma.powerup.restaurantmicroservice.domain.usecase;
 
 import com.pragma.powerup.restaurantmicroservice.domain.api.IOrderServicePort;
 import com.pragma.powerup.restaurantmicroservice.domain.exceptions.ClientOrderInProgressException;
-import com.pragma.powerup.restaurantmicroservice.domain.exceptions.OrderNotRestaurantEmployeeException;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Order;
 import com.pragma.powerup.restaurantmicroservice.domain.model.OrderStatus;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IOrderPersistencePort;
-import com.pragma.powerup.restaurantmicroservice.domain.util.AuthorizationUtil;
+import com.pragma.powerup.restaurantmicroservice.domain.spi.ISmsClient;
+import com.pragma.powerup.restaurantmicroservice.domain.util.AuthUtil;
+import com.pragma.powerup.restaurantmicroservice.domain.util.SecurityCodeGenerator;
 import org.springframework.data.domain.Pageable;
-
 import java.time.LocalDate;
 import java.util.List;
 
 public class OrderUseCase implements IOrderServicePort {
 
     private final IOrderPersistencePort orderPersistencePort;
-    private final AuthorizationUtil authorizationUtil;
+    private final ISmsClient smsClient;
+    private final AuthUtil authUtil;
 
-    public OrderUseCase(IOrderPersistencePort orderPersistencePort, AuthorizationUtil authorizationUtil) {
+    public OrderUseCase(IOrderPersistencePort orderPersistencePort, ISmsClient smsClient, AuthUtil authUtil) {
         this.orderPersistencePort = orderPersistencePort;
-        this.authorizationUtil = authorizationUtil;
+        this.smsClient = smsClient;
+        this.authUtil = authUtil;
     }
 
     @Override
     public void createOrder(Order order) {
-        Long currentClientId = authorizationUtil.getCurrentUserId();
+        Long currentClientId = authUtil.getCurrentUserId();
+        String currentClientPhone = authUtil.getCurrentUserPhone();
         if (Boolean.TRUE.equals(orderPersistencePort.existsOrderInProcess(currentClientId))) {
             throw new ClientOrderInProgressException();
         }
         order.setIdClient(currentClientId);
         order.setDate(LocalDate.now());
         order.setStatus(OrderStatus.PENDING);
+        order.setPhoneClient(currentClientPhone);
         orderPersistencePort.saveOrder(order);
     }
 
     @Override
     public List<Order> listOrders(OrderStatus status, Pageable pageable) {
-        Long idRestaurantOfEmployee = authorizationUtil.getCurrentEmployeeRestaurantId();
+        Long idRestaurantOfEmployee = authUtil.getCurrentEmployeeRestaurantId();
         return orderPersistencePort.listOrders(status.name(), idRestaurantOfEmployee ,pageable);
     }
 
     @Override
     public void assignOrder(Long idOrder) {
         Order order = orderPersistencePort.getOrder(idOrder);
-        Long idRestaurantOfEmployee = authorizationUtil.getCurrentEmployeeRestaurantId();
-        if (!order.getIdRestaurant().equals(idRestaurantOfEmployee)) {
-            throw new OrderNotRestaurantEmployeeException();
-        }
-        Long currentEmployeeId = authorizationUtil.getCurrentUserId();
+        Long idRestaurantOfEmployee = authUtil.getCurrentEmployeeRestaurantId();
+        authUtil.checkEmployeeOfRestaurant(order.getIdRestaurant(), idRestaurantOfEmployee);
+        Long currentEmployeeId = authUtil.getCurrentUserId();
         order.setIdChef(currentEmployeeId);
         order.setStatus(OrderStatus.IN_PREPARATION);
+        orderPersistencePort.saveOrder(order);
+    }
+
+    @Override
+    public void orderReady(Long idOrder) {
+        Order order = orderPersistencePort.getOrder(idOrder);
+        Long idRestaurantOfEmployee = authUtil.getCurrentEmployeeRestaurantId();
+        authUtil.checkEmployeeOfRestaurant(order.getIdRestaurant(), idRestaurantOfEmployee);
+        order.setStatus(OrderStatus.READY);
+        String code = SecurityCodeGenerator.generateCode();
+        order.setSecurityCode(code);
+        smsClient.sendSms(order.getPhoneClient(), code, authUtil.getCurrentUserToken());
         orderPersistencePort.saveOrder(order);
     }
 }

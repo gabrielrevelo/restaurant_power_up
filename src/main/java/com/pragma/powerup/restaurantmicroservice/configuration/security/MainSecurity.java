@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true) // Asegúrate de tener esta línea habilitada
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class MainSecurity {
 
     @Autowired

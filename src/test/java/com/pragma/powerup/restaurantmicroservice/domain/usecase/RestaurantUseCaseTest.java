@@ -7,7 +7,7 @@ import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IEmployeeRestaurantPersistencePort;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IUserClient;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
-import com.pragma.powerup.restaurantmicroservice.domain.util.AuthorizationUtil;
+import com.pragma.powerup.restaurantmicroservice.domain.util.AuthUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -29,14 +29,14 @@ class RestaurantUseCaseTest {
     @Mock
     private IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort;
     @Mock
-    private AuthorizationUtil authorizationUtil;
+    private AuthUtil authUtil;
 
     private RestaurantUseCase restaurantUseCase;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        restaurantUseCase = new RestaurantUseCase(restaurantPersistencePort, employeeRestaurantPersistencePort, userClient, authorizationUtil);
+        restaurantUseCase = new RestaurantUseCase(restaurantPersistencePort, employeeRestaurantPersistencePort, userClient, authUtil);
     }
 
     @Test

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-@EnableFeignClients({"com.pragma.powerup.restaurantmicroservice.adapters.driven.restclient.adapter"})
+@EnableFeignClients({"com.pragma.powerup.restaurantmicroservice.adapters.driven"})
 public class RestaurantMicroserviceApplication {
 
 	public static void main(String[] args) {

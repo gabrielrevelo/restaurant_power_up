@@ -8,9 +8,8 @@ import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IEmployeeRestaurantPersistencePort;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IUserClient;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
-import com.pragma.powerup.restaurantmicroservice.domain.util.AuthorizationUtil;
+import com.pragma.powerup.restaurantmicroservice.domain.util.AuthUtil;
 import com.pragma.powerup.restaurantmicroservice.domain.util.PaginationUtil;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -21,18 +20,18 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     private final IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort;
     private final IUserClient userClient;
 
-    private final AuthorizationUtil authorizationUtil;
+    private final AuthUtil authUtil;
 
-    public RestaurantUseCase(IRestaurantPersistencePort restaurantPersistencePort, IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort, IUserClient userClient, AuthorizationUtil authorizationUtil) {
+    public RestaurantUseCase(IRestaurantPersistencePort restaurantPersistencePort, IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort, IUserClient userClient, AuthUtil authUtil) {
         this.restaurantPersistencePort = restaurantPersistencePort;
         this.employeeRestaurantPersistencePort = employeeRestaurantPersistencePort;
         this.userClient = userClient;
-        this.authorizationUtil = authorizationUtil;
+        this.authUtil = authUtil;
     }
 
     @Override
     public void saveRestaurant(Restaurant restaurant) {
-        String token = authorizationUtil.getUserToken();
+        String token = authUtil.getCurrentUserToken();
 
         if(!Objects.equals(userClient.getIdUserRole(restaurant.getIdOwner(), token), Constants.OWNER_ROLE_ID)) {
             throw new UserNotOwnerException();
@@ -52,8 +51,8 @@ public class RestaurantUseCase implements IRestaurantServicePort {
 
     @Override
     public Employee registerEmployee(Long restaurantId, Employee employee) {
-        authorizationUtil.checkOwnerAuthorization(restaurantId);
-        String token = authorizationUtil.getUserToken();
+        authUtil.checkOwnerOfRestaurant(restaurantId);
+        String token = authUtil.getCurrentUserToken();
 
         Long idEmployeeCreated = userClient.createEmployee(employee, token);
         employeeRestaurantPersistencePort.saveEmployeeRestaurant(idEmployeeCreated, restaurantId);
