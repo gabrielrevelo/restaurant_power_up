@@ -1,6 +1,7 @@
 package com.pragma.powerup.restaurantmicroservice.adapters.driving.http.controller;
 
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.dto.request.OrderRequestDto;
+import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.dto.request.SecurityCodeRequestDto;
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.dto.response.OrderResponseDto;
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.handlers.IOrderHandler;
 import com.pragma.powerup.restaurantmicroservice.configuration.Constants;
@@ -67,5 +68,16 @@ public class OrderRestController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new SuccessfulApiResponse<>("Order ready successfully"));
+    }
+
+    @PatchMapping("/{idOrder}/delivered")
+    @SecurityRequirement(name = "jwt")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<SuccessfulApiResponse<List<OrderResponseDto>>> orderDelivered(
+            @PathVariable Long idOrder, @RequestBody SecurityCodeRequestDto securityCodeRequestDto) {
+        orderHandler.orderDelivered(idOrder, securityCodeRequestDto.getSecurityCode());
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new SuccessfulApiResponse<>("Order delivered successfully"));
     }
 }

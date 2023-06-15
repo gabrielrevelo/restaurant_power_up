@@ -24,4 +24,5 @@ public class OrderEntity {
     private LocalDate date;
     private String status;
     private String phoneClient;
+    private String securityCode;
 }

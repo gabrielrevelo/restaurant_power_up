@@ -27,6 +27,7 @@ public class Constants {
     public static final String USER_ALREADY_EXISTS_MESSAGE = "A user already exists with the role provided";
     public static final String USER_NOT_FOUND_MESSAGE = "No user found";
     public static final String ORDER_NOT_FOUND_MESSAGE = "No order found";
+    public static final String ORDER_NOT_READY_MESSAGE = "Order not ready";
     public static final String RESTAURANT_NOT_FOUND_MESSAGE = "No restaurant found";
     public static final String DISH_NOT_FOUND_MESSAGE = "No dish found";
     public static final String SWAGGER_TITLE_MESSAGE = "Restaurant API Pragma Power Up";
@@ -43,4 +44,5 @@ public class Constants {
     public static final String DISH_CHANGED_STATE_MESSAGE = "Dish state changed successfully";
     public static final String ORDER_IN_PROGRESS_MESSAGE = "Order in progress for this user";
     public static final String ORDER_NOT_RESTAURANT_EMPLOYEE_MESSAGE = "Order not belong to restaurant employee";
+    public static final String INVALID_SECURITY_CODE_ORDER_MESSAGE = "Invalid security code for order";
 }
