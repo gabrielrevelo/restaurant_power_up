@@ -40,7 +40,7 @@ public class OrderHandlerImp implements IOrderHandler {
 
     @Override
     public void orderDelivered(Long idOrder, String securityCode) {
-        orderServicePort.orderDelivered(idOrder, securityCode);
+        orderServicePort.deliverOrder(idOrder, securityCode);
     }
 
     @Override

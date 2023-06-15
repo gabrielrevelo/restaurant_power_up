@@ -84,14 +84,6 @@ class DishUseCaseTest {
 
     @Test
     void listDishes() {
-        List<Dish> allRestaurants = Arrays.asList(
-                new Dish(1L, "Dish A", new Category(1L, null, null), 1L, true),
-                new Dish(2L, "Dish C", new Category(3L, null, null), 2L, true),
-                new Dish(3L, "Dish B", new Category(2L, null, null), 2L, true),
-                new Dish(4L, "Dish D", new Category(1L, null, null), 1L, true),
-                new Dish(5L, "Dish E", new Category(2L, null, null), 1L, true),
-                new Dish(6L, "Dish F", new Category(1L, null, null), 1L, true)
-        );
         List<Dish> expected = Arrays.asList(
                 new Dish(1L, "Dish A", new Category(1L, null, null), 1L, true),
                 new Dish(4L, "Dish D", new Category(1L, null, null), 1L, true)

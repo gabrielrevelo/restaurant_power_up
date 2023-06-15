@@ -22,6 +22,7 @@ import com.pragma.powerup.restaurantmicroservice.domain.usecase.DishUseCase;
 import com.pragma.powerup.restaurantmicroservice.domain.usecase.OrderUseCase;
 import com.pragma.powerup.restaurantmicroservice.domain.usecase.RestaurantUseCase;
 import com.pragma.powerup.restaurantmicroservice.domain.util.AuthUtil;
+import com.pragma.powerup.restaurantmicroservice.domain.util.SecurityCodeGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,7 +41,7 @@ public class BeanConfiguration {
     private final IOrderEntityMapper orderEntityMapper;
     private final UserApiClient userApiClient;
     private final SmsApiClient smsApiClient;
-
+    private final SecurityCodeGenerator securityCodeGenerator;
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort() {
         return new RestaurantMysqlAdapter(restaurantRepository, restaurantEntityMapper);
@@ -88,7 +89,7 @@ public class BeanConfiguration {
 
     @Bean
     public IOrderServicePort orderServicePort() {
-        return new OrderUseCase(orderPersistencePort(), smsClient(), authorizationUtil());
+        return new OrderUseCase(orderPersistencePort(), smsClient(), authorizationUtil(), securityCodeGenerator);
     }
 
     @Bean
