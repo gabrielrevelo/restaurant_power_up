@@ -1,9 +1,7 @@
 package com.pragma.powerup.restaurantmicroservice.domain.usecase;
 
 import com.pragma.powerup.restaurantmicroservice.domain.api.IOrderServicePort;
-import com.pragma.powerup.restaurantmicroservice.domain.exceptions.ClientOrderInProgressException;
-import com.pragma.powerup.restaurantmicroservice.domain.exceptions.InvalidSecurityCodeException;
-import com.pragma.powerup.restaurantmicroservice.domain.exceptions.OrderNotReadyException;
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.*;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Order;
 import com.pragma.powerup.restaurantmicroservice.domain.model.OrderStatus;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IOrderPersistencePort;
@@ -11,6 +9,7 @@ import com.pragma.powerup.restaurantmicroservice.domain.spi.ISmsClient;
 import com.pragma.powerup.restaurantmicroservice.domain.util.AuthUtil;
 import com.pragma.powerup.restaurantmicroservice.domain.util.SecurityCodeGenerator;
 import org.springframework.data.domain.Pageable;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class OrderUseCase implements IOrderServicePort {
     @Override
     public List<Order> listOrders(OrderStatus status, Pageable pageable) {
         Long idRestaurantOfEmployee = authUtil.getCurrentEmployeeRestaurantId();
-        return orderPersistencePort.listOrders(status.name(), idRestaurantOfEmployee ,pageable);
+        return orderPersistencePort.listOrders(status.name(), idRestaurantOfEmployee, pageable);
     }
 
     @Override
@@ -81,6 +80,25 @@ public class OrderUseCase implements IOrderServicePort {
             throw new InvalidSecurityCodeException();
         }
         order.setStatus(OrderStatus.DELIVERED);
+        orderPersistencePort.saveOrder(order);
+    }
+
+    /**
+     * Marks an order as CANCELED.
+     *
+     * @param idOrder The ID of the order to cancel.
+     * @throws OrderNotBelongClientException If the order does not belong to the current client.
+     *                                       ({@code authUtil.checkClientOfOrder})
+     * @throws OrderNotPendingException      If the order is not in PENDING status.
+     */
+    @Override
+    public void cancelOrder(Long idOrder) {
+        Order order = orderPersistencePort.getOrder(idOrder);
+        authUtil.checkClientOfOrder(order);
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new OrderNotPendingException(order.getStatus().name());
+        }
+        order.setStatus(OrderStatus.CANCELLED);
         orderPersistencePort.saveOrder(order);
     }
 }

@@ -1,8 +1,10 @@
 package com.pragma.powerup.restaurantmicroservice.domain.util;
 
 import com.pragma.powerup.restaurantmicroservice.domain.api.ICurrentUserServicePort;
-import com.pragma.powerup.restaurantmicroservice.domain.exceptions.OrderNotRestaurantEmployeeException;
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.OrderNotBelongClientException;
+import com.pragma.powerup.restaurantmicroservice.domain.exceptions.OrderNotEmployeeOfRestaurantException;
 import com.pragma.powerup.restaurantmicroservice.domain.exceptions.UserNotOwnerException;
+import com.pragma.powerup.restaurantmicroservice.domain.model.Order;
 import com.pragma.powerup.restaurantmicroservice.domain.model.Restaurant;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IEmployeeRestaurantPersistencePort;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IRestaurantPersistencePort;
@@ -29,7 +31,14 @@ public class AuthUtil {
 
     public void checkEmployeeOfRestaurant(Long idOrder, Long idRestaurantOfEmployee) {
         if (!idOrder.equals(idRestaurantOfEmployee)) {
-            throw new OrderNotRestaurantEmployeeException();
+            throw new OrderNotEmployeeOfRestaurantException();
+        }
+    }
+
+    public void checkClientOfOrder(Order order) {
+        Long currentUserId = Long.valueOf(currentUserServicePort.getCurrentUserId());
+        if (!order.getIdClient().equals(currentUserId)) {
+            throw new OrderNotBelongClientException();
         }
     }
 

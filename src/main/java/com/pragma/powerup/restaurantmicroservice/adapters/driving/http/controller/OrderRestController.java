@@ -70,12 +70,23 @@ public class OrderRestController {
                 .body(new SuccessfulApiResponse<>("Order ready successfully"));
     }
 
-    @PatchMapping("/{idOrder}/delivered")
+    @PatchMapping("/{idOrder}/deliver")
     @SecurityRequirement(name = "jwt")
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<SuccessfulApiResponse<List<OrderResponseDto>>> orderDelivered(
             @PathVariable Long idOrder, @RequestBody SecurityCodeRequestDto securityCodeRequestDto) {
         orderHandler.orderDelivered(idOrder, securityCodeRequestDto.getSecurityCode());
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new SuccessfulApiResponse<>("Order delivered successfully"));
+    }
+
+    @PatchMapping("/{idOrder}/cancel")
+    @SecurityRequirement(name = "jwt")
+    @PreAuthorize("hasRole('CLIENT')")
+    public ResponseEntity<SuccessfulApiResponse<List<OrderResponseDto>>> cancelOrder(
+            @PathVariable Long idOrder) {
+        orderHandler.cancelOrder(idOrder);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new SuccessfulApiResponse<>("Order delivered successfully"));

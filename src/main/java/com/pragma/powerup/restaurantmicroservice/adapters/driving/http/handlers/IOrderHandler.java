@@ -17,4 +17,6 @@ public interface IOrderHandler {
     void orderReady(Long idOrder);
 
     void orderDelivered(Long idOrder, String securityCode);
+
+    void cancelOrder(Long idOrder);
 }
