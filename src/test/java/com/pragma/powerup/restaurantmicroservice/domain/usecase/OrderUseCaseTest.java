@@ -10,7 +10,7 @@ import com.pragma.powerup.restaurantmicroservice.domain.model.OrderStatus;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IOrderPersistencePort;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.ISmsClient;
 import com.pragma.powerup.restaurantmicroservice.domain.util.AuthUtil;
-import com.pragma.powerup.restaurantmicroservice.domain.util.SecurityCodeGenerator;
+import com.pragma.powerup.restaurantmicroservice.domain.util.CodeGeneratorUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -35,14 +35,14 @@ class OrderUseCaseTest {
     private ISmsClient smsClient;
 
     @Mock
-    private SecurityCodeGenerator securityCodeGenerator;
+    private CodeGeneratorUtil codeGeneratorUtil;
 
     private OrderUseCase orderUseCase;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        orderUseCase = new OrderUseCase(orderPersistencePort, smsClient, authUtil, securityCodeGenerator);
+        orderUseCase = new OrderUseCase(orderPersistencePort, smsClient, authUtil, codeGeneratorUtil);
     }
 
     @Test
@@ -132,7 +132,7 @@ class OrderUseCaseTest {
         when(orderPersistencePort.getOrder(idOrder)).thenReturn(order);
         when(authUtil.getCurrentEmployeeRestaurantId()).thenReturn(idRestaurantOfEmployee);
         doNothing().when(authUtil).checkEmployeeOfRestaurant(anyLong(), anyLong());
-        when(securityCodeGenerator.generateCode()).thenReturn(securityCode);
+        when(codeGeneratorUtil.generateCode()).thenReturn(securityCode);
         when(authUtil.getCurrentUserToken()).thenReturn(token);
 
         orderUseCase.orderReady(idOrder);

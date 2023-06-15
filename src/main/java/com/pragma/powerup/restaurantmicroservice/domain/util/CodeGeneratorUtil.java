@@ -2,7 +2,7 @@ package com.pragma.powerup.restaurantmicroservice.domain.util;
 
 import java.util.Random;
 
-public class SecurityCodeGenerator {
+public class CodeGeneratorUtil {
     public String generateCode() {
         Random random = new Random();
         String code = "";
