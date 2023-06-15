@@ -58,10 +58,10 @@ public class RestaurantRestController {
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Map"))),
                     @ApiResponse(responseCode = "400", description = "Employee not registered",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
-    @PostMapping("/{id}/employee")
+    @PostMapping("/{idRestaurant}/employee")
     @SecurityRequirement(name = "jwt")
     public ResponseEntity<SuccessfulApiResponse<EmployeeResponseDto>> registerEmployee(@Valid @RequestBody EmployeeRequestDto employeeRequestDto,
-                                                                                       @PathVariable("id") Long restaurantId) {
+                                                                                       @PathVariable("idRestaurant") Long restaurantId) {
         EmployeeResponseDto employeeResponseDto = restaurantHandler.registerEmployee(employeeRequestDto, restaurantId);
 
         return ResponseEntity.status(HttpStatus.CREATED)

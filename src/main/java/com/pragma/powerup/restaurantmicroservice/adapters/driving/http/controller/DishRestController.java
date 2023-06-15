@@ -47,10 +47,10 @@ public class DishRestController {
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Map"))),
                     @ApiResponse(responseCode = "400", description = "Dish not updated",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
-    @PatchMapping("/{id}")
+    @PatchMapping("/{idDish}")
     @SecurityRequirement(name = "jwt")
     public ResponseEntity<SuccessfulApiResponse<Void>> updateDish(
-            @PathVariable("id") Long dishId,
+            @PathVariable("idDish") Long dishId,
             @Valid @RequestBody DishUpdateDto dishUpdateDto) {
         dishHandler.updateDish(dishId, dishUpdateDto);
 
@@ -58,10 +58,10 @@ public class DishRestController {
                 .body(new SuccessfulApiResponse<>(Constants.DISH_UPDATED_MESSAGE));
     }
 
-    @PatchMapping("{id}/state")
+    @PatchMapping("{idDish}/state")
     @SecurityRequirement(name = "jwt")
     public ResponseEntity<SuccessfulApiResponse<Void>> changeStateDish(
-            @PathVariable("id") Long dishId) {
+            @PathVariable("idDish") Long dishId) {
         dishHandler.changeStateDish(dishId);
 
         return ResponseEntity.ok()
@@ -75,7 +75,6 @@ public class DishRestController {
             @RequestParam(required = false) Long categoryId,
             @RequestParam(defaultValue = "1") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize) {
-        //Todo Move pageable to a handler
         Pageable pageable = Pageable.ofSize(pageSize).withPage(pageNumber - 1);
         List<DishResponseDto> dishList = dishHandler.listDishes(idRestaurant, categoryId, pageable);
 
