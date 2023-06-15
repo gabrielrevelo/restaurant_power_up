@@ -28,8 +28,8 @@ public class OrderMysqlAdapter implements IOrderPersistencePort {
         if (order.getMenuSelections() != null) {
             order.getMenuSelections().stream()
                     .map(menuSelection -> new OrderDishEntity(
-                            orderSaved.getId(),
                             menuSelection.getIdDish(),
+                            orderSaved.getId(),
                             menuSelection.getQuantity()))
                     .forEach(orderDishRepository::save);
         }
