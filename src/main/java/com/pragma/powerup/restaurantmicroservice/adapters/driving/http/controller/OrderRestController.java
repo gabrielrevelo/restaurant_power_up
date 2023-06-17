@@ -56,7 +56,7 @@ public class OrderRestController {
         orderHandler.assignOrder(idOrder);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new SuccessfulApiResponse<>("Order assigned successfully"));
+                .body(new SuccessfulApiResponse<>(Constants.ORDER_ASSINGED_MESSAGE));
     }
 
     @PatchMapping("/{idOrder}/ready")
@@ -67,7 +67,7 @@ public class OrderRestController {
         orderHandler.orderReady(idOrder);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new SuccessfulApiResponse<>("Order ready successfully"));
+                .body(new SuccessfulApiResponse<>(Constants.ORDER_READY_MESSAGE));
     }
 
     @PatchMapping("/{idOrder}/deliver")
@@ -78,7 +78,7 @@ public class OrderRestController {
         orderHandler.orderDelivered(idOrder, securityCodeRequestDto.getSecurityCode());
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new SuccessfulApiResponse<>("Order delivered successfully"));
+                .body(new SuccessfulApiResponse<>(Constants.ORDER_DELIVERED_MESSAGE));
     }
 
     @PatchMapping("/{idOrder}/cancel")
@@ -89,6 +89,6 @@ public class OrderRestController {
         orderHandler.cancelOrder(idOrder);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new SuccessfulApiResponse<>("Order delivered successfully"));
+                .body(new SuccessfulApiResponse<>(Constants.ORDER_CANCELLED_MESSAGE));
     }
 }
