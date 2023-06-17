@@ -60,7 +60,6 @@ jacocoTestReport {
 			fileTree(dir: it, exclude: ["com/pragma/powerup/restaurantmicroservice/configuration",
 										"com/pragma/powerup/restaurantmicroservice/adapters",
 										"com/pragma/powerup/restaurantmicroservice/domain/model",
-										"com/pragma/powerup/restaurantmicroservice/domain/util",
 										"com/pragma/powerup/restaurantmicroservice/domain/exceptions"])
 		}))
 	}

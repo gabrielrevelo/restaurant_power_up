@@ -21,23 +21,23 @@ public class AuthUtil {
         this.currentUserServicePort = currentUserServicePort;
     }
 
-    public void checkOwnerOfRestaurant(Long restaurantId) {
-        String currentUserId = currentUserServicePort.getCurrentUserId();
-        Restaurant restaurant = restaurantPersistencePort.getRestaurant(restaurantId);
-        if (!restaurant.getIdOwner().equals(currentUserId)) {
+    public void checkOwnerOfRestaurant(Long idRestaurant) {
+        String idCurrentUser = currentUserServicePort.getCurrentUserId();
+        Restaurant restaurant = restaurantPersistencePort.getRestaurant(idRestaurant);
+        if (!restaurant.getIdOwner().equals(idCurrentUser)) {
             throw new UserNotOwnerException("User not owner of restaurant");
         }
     }
 
-    public void checkEmployeeOfRestaurant(Long idOrder, Long idRestaurantOfEmployee) {
-        if (!idOrder.equals(idRestaurantOfEmployee)) {
+    public void checkEmployeeOfRestaurant(Long idRestaurant, Long idRestaurantOfEmployee) {
+        if (!idRestaurant.equals(idRestaurantOfEmployee)) {
             throw new OrderNotEmployeeOfRestaurantException();
         }
     }
 
     public void checkClientOfOrder(Order order) {
-        Long currentUserId = Long.valueOf(currentUserServicePort.getCurrentUserId());
-        if (!order.getIdClient().equals(currentUserId)) {
+        Long idCurrentUser = Long.valueOf(currentUserServicePort.getCurrentUserId());
+        if (!order.getIdClient().equals(idCurrentUser)) {
             throw new OrderNotBelongClientException();
         }
     }
