@@ -10,6 +10,7 @@ import com.pragma.powerup.restaurantmicroservice.domain.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
  import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -41,6 +42,12 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorApiResponse> handleAuthenticationException() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorApiResponse(WRONG_CREDENTIALS_MESSAGE));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorApiResponse> handleAccessDeniedException() {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorApiResponse(WRONG_CREDENTIALS_MESSAGE));
     }

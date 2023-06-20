@@ -12,21 +12,24 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/restaurants")
+@Tag(name = "Restaurant Controller", description = "Controller for managing restaurants")
 @RequiredArgsConstructor
 public class RestaurantRestController {
 
     private final IRestaurantHandler restaurantHandler;
 
-    @Operation(summary = "Add a new Restaurant",
+    @Operation(summary = "[ADMIN] Add a new Restaurant",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Restaurant created",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Map"))),
@@ -34,6 +37,7 @@ public class RestaurantRestController {
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
     @PostMapping()
     @SecurityRequirement(name = "jwt")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SuccessfulApiResponse<Void>> saveRestaurant(@Valid @RequestBody RestaurantRequestDto restaurantRequestDto) {
         restaurantHandler.saveRestaurant(restaurantRequestDto);
 
@@ -41,6 +45,7 @@ public class RestaurantRestController {
                 .body(new SuccessfulApiResponse<>(Constants.RESTAURANT_CREATED_MESSAGE));
     }
 
+    @Operation(summary = "[CLIENT] Get all Restaurants")
     @GetMapping("")
     @SecurityRequirement(name = "jwt")
     public ResponseEntity<SuccessfulApiResponse<List<RestaurantResponseDto>>> getRestaurants(
@@ -52,7 +57,7 @@ public class RestaurantRestController {
                     .body(new SuccessfulApiResponse<>(restaurantList));
     }
 
-    @Operation(summary = "Register a new Employee in a Restaurant",
+    @Operation(summary = "[OWNER] Register a new Employee in a Restaurant",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Employee registered",
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Map"))),
@@ -60,6 +65,7 @@ public class RestaurantRestController {
                             content = @Content(mediaType = "application/json", schema = @Schema(ref = "#/components/schemas/Error")))})
     @PostMapping("/{idRestaurant}/employee")
     @SecurityRequirement(name = "jwt")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<SuccessfulApiResponse<EmployeeResponseDto>> registerEmployee(@Valid @RequestBody EmployeeRequestDto employeeRequestDto,
                                                                                        @PathVariable("idRestaurant") Long restaurantId) {
         EmployeeResponseDto employeeResponseDto = restaurantHandler.registerEmployee(employeeRequestDto, restaurantId);
