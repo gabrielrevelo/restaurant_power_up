@@ -28,6 +28,7 @@ public class Constants {
     public static final String USER_NOT_FOUND_MESSAGE = "No user found";
     public static final String ORDER_NOT_FOUND_MESSAGE = "No order found";
     public static final String ORDER_NOT_READY_MESSAGE = "Order not ready";
+    public static final String ORDER_NOT_PENDING_MESSAGE = "Order not pending";
     public static final String ORDER_NOT_BELONG_CLIENT_MESSAGE = "Order not belong to client";
     public static final String RESTAURANT_NOT_FOUND_MESSAGE = "No restaurant found";
     public static final String DISH_NOT_FOUND_MESSAGE = "No dish found";
@@ -46,4 +47,10 @@ public class Constants {
     public static final String ORDER_IN_PROGRESS_MESSAGE = "Order in progress for this user";
     public static final String ORDER_NOT_RESTAURANT_EMPLOYEE_MESSAGE = "Order not belong to restaurant employee";
     public static final String INVALID_SECURITY_CODE_ORDER_MESSAGE = "Invalid security code for order";
+    public static final String ORDER_ASSINGED_MESSAGE = "Order assigned successfully";
+    public static final String ORDER_READY_MESSAGE = "Order ready successfully";
+    public static final String ORDER_DELIVERED_MESSAGE = "Order delivered successfully";
+    public static final String ORDER_CANCELLED_MESSAGE = "Order cancelled successfully";
+    public static final String EMPLOYEE_NOT_CREATED_MESSAGE = "Employee not created";
+
 }

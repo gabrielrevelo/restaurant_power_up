@@ -24,7 +24,7 @@ import com.pragma.powerup.restaurantmicroservice.domain.usecase.DishUseCase;
 import com.pragma.powerup.restaurantmicroservice.domain.usecase.OrderUseCase;
 import com.pragma.powerup.restaurantmicroservice.domain.usecase.RestaurantUseCase;
 import com.pragma.powerup.restaurantmicroservice.domain.util.AuthUtil;
-import com.pragma.powerup.restaurantmicroservice.domain.util.SecurityCodeGenerator;
+import com.pragma.powerup.restaurantmicroservice.domain.util.CodeGeneratorUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,18 +43,20 @@ public class BeanConfiguration {
     private final IOrderEntityMapper orderEntityMapper;
     private final UserApiClient userApiClient;
     private final SmsApiClient smsApiClient;
+
     private final TraceApiClient traceApiClient;
     @Bean
     public SecurityCodeGenerator securityCodeGenerator() {
         return new SecurityCodeGenerator();
     }
+  
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort() {
         return new RestaurantMysqlAdapter(restaurantRepository, restaurantEntityMapper);
     }
 
     @Bean
-    public AuthUtil authorizationUtil() {
+    public AuthUtil authUtil() {
         return new AuthUtil(restaurantPersistencePort(), employeeRestaurantPersistencePort(), userServicePort());
     }
 
@@ -80,7 +82,7 @@ public class BeanConfiguration {
 
     @Bean
     public IRestaurantServicePort restaurantServicePort() {
-        return new RestaurantUseCase(restaurantPersistencePort(), employeeRestaurantPersistencePort(), restTemplateClient(), authorizationUtil());
+        return new RestaurantUseCase(restaurantPersistencePort(), employeeRestaurantPersistencePort(), restTemplateClient(), authUtil());
     }
 
     @Bean
@@ -95,7 +97,7 @@ public class BeanConfiguration {
 
     @Bean
     public IDishServicePort dishServicePort() {
-        return new DishUseCase(dishPersistencePort(), authorizationUtil());
+        return new DishUseCase(dishPersistencePort(), authUtil());
     }
 
     @Bean

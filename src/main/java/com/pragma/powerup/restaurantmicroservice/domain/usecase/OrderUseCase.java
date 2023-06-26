@@ -8,7 +8,7 @@ import com.pragma.powerup.restaurantmicroservice.domain.spi.IOrderPersistencePor
 import com.pragma.powerup.restaurantmicroservice.domain.spi.ISmsClient;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.ITraceClient;
 import com.pragma.powerup.restaurantmicroservice.domain.util.AuthUtil;
-import com.pragma.powerup.restaurantmicroservice.domain.util.SecurityCodeGenerator;
+import com.pragma.powerup.restaurantmicroservice.domain.util.CodeGeneratorUtil;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
@@ -20,14 +20,14 @@ public class OrderUseCase implements IOrderServicePort {
     private final ISmsClient smsClient;
     private final ITraceClient traceClient;
     private final AuthUtil authUtil;
-    private final SecurityCodeGenerator securityCodeGenerator;
+    private final CodeGeneratorUtil codeGeneratorUtil;
 
     public OrderUseCase(IOrderPersistencePort orderPersistencePort, ISmsClient smsClient, ITraceClient traceClient, AuthUtil authUtil, SecurityCodeGenerator securityCodeGenerator) {
         this.orderPersistencePort = orderPersistencePort;
         this.smsClient = smsClient;
         this.traceClient = traceClient;
         this.authUtil = authUtil;
-        this.securityCodeGenerator = securityCodeGenerator;
+        this.codeGeneratorUtil = codeGeneratorUtil;
     }
 
     @Override
@@ -70,7 +70,7 @@ public class OrderUseCase implements IOrderServicePort {
         Long idRestaurantOfEmployee = authUtil.getCurrentEmployeeRestaurantId();
         authUtil.checkEmployeeOfRestaurant(order.getIdRestaurant(), idRestaurantOfEmployee);
         order.setStatus(OrderStatus.READY);
-        String code = securityCodeGenerator.generateCode();
+        String code = codeGeneratorUtil.generateCode();
         order.setSecurityCode(code);
         smsClient.sendSms(order.getPhoneClient(), code, authUtil.getCurrentUserToken());
         traceClient.trace(order, oldStatus, authUtil.getCurrentUserToken());

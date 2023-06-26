@@ -7,7 +7,9 @@ import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.handlers.
 import com.pragma.powerup.restaurantmicroservice.configuration.Constants;
 import com.pragma.powerup.restaurantmicroservice.configuration.response.SuccessfulApiResponse;
 import com.pragma.powerup.restaurantmicroservice.domain.model.OrderStatus;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -20,10 +22,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/orders/")
+@Tag(name = "Order Controller", description = "Controller for managing orders")
 @RequiredArgsConstructor
 public class OrderRestController {
     private final IOrderHandler orderHandler;
 
+    @Operation(summary = "[CLIENT] Create a new Order")
     @PostMapping()
     @SecurityRequirement(name = "jwt")
     @PreAuthorize("hasRole('CLIENT')")
@@ -34,6 +38,7 @@ public class OrderRestController {
                 .body(new SuccessfulApiResponse<>(Constants.ORDER_CREATED_MESSAGE));
     }
 
+    @Operation(summary = "[EMPLOYEE] List orders by status")
     @GetMapping()
     @SecurityRequirement(name = "jwt")
     @PreAuthorize("hasRole('EMPLOYEE')")
@@ -48,6 +53,7 @@ public class OrderRestController {
                 .body(new SuccessfulApiResponse<>(orders));
     }
 
+    @Operation(summary = "[EMPLOYEE] Assign an order to an employee")
     @PatchMapping("/{idOrder}/assign")
     @SecurityRequirement(name = "jwt")
     @PreAuthorize("hasRole('EMPLOYEE')")
@@ -56,9 +62,10 @@ public class OrderRestController {
         orderHandler.assignOrder(idOrder);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new SuccessfulApiResponse<>("Order assigned successfully"));
+                .body(new SuccessfulApiResponse<>(Constants.ORDER_ASSINGED_MESSAGE));
     }
 
+    @Operation(summary = "[EMPLOYEE] Change Order to ready, to be delivered")
     @PatchMapping("/{idOrder}/ready")
     @SecurityRequirement(name = "jwt")
     @PreAuthorize("hasRole('EMPLOYEE')")
@@ -67,9 +74,10 @@ public class OrderRestController {
         orderHandler.orderReady(idOrder);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new SuccessfulApiResponse<>("Order ready successfully"));
+                .body(new SuccessfulApiResponse<>(Constants.ORDER_READY_MESSAGE));
     }
 
+    @Operation(summary = "[EMPLOYEE] Change Order to delivered")
     @PatchMapping("/{idOrder}/deliver")
     @SecurityRequirement(name = "jwt")
     @PreAuthorize("hasRole('EMPLOYEE')")
@@ -78,9 +86,10 @@ public class OrderRestController {
         orderHandler.orderDelivered(idOrder, securityCodeRequestDto.getSecurityCode());
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new SuccessfulApiResponse<>("Order delivered successfully"));
+                .body(new SuccessfulApiResponse<>(Constants.ORDER_DELIVERED_MESSAGE));
     }
 
+    @Operation(summary = "[CLIENT] Cancel an order")
     @PatchMapping("/{idOrder}/cancel")
     @SecurityRequirement(name = "jwt")
     @PreAuthorize("hasRole('CLIENT')")
@@ -89,6 +98,6 @@ public class OrderRestController {
         orderHandler.cancelOrder(idOrder);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new SuccessfulApiResponse<>("Order delivered successfully"));
+                .body(new SuccessfulApiResponse<>(Constants.ORDER_CANCELLED_MESSAGE));
     }
 }
