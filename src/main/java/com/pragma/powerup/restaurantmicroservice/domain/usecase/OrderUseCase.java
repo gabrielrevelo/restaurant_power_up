@@ -6,6 +6,7 @@ import com.pragma.powerup.restaurantmicroservice.domain.model.Order;
 import com.pragma.powerup.restaurantmicroservice.domain.model.OrderStatus;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.IOrderPersistencePort;
 import com.pragma.powerup.restaurantmicroservice.domain.spi.ISmsClient;
+import com.pragma.powerup.restaurantmicroservice.domain.spi.ITraceClient;
 import com.pragma.powerup.restaurantmicroservice.domain.util.AuthUtil;
 import com.pragma.powerup.restaurantmicroservice.domain.util.CodeGeneratorUtil;
 import org.springframework.data.domain.Pageable;
@@ -17,12 +18,14 @@ public class OrderUseCase implements IOrderServicePort {
 
     private final IOrderPersistencePort orderPersistencePort;
     private final ISmsClient smsClient;
+    private final ITraceClient traceClient;
     private final AuthUtil authUtil;
     private final CodeGeneratorUtil codeGeneratorUtil;
 
-    public OrderUseCase(IOrderPersistencePort orderPersistencePort, ISmsClient smsClient, AuthUtil authUtil, CodeGeneratorUtil codeGeneratorUtil) {
+    public OrderUseCase(IOrderPersistencePort orderPersistencePort, ISmsClient smsClient, ITraceClient traceClient, AuthUtil authUtil, SecurityCodeGenerator securityCodeGenerator) {
         this.orderPersistencePort = orderPersistencePort;
         this.smsClient = smsClient;
+        this.traceClient = traceClient;
         this.authUtil = authUtil;
         this.codeGeneratorUtil = codeGeneratorUtil;
     }
@@ -50,29 +53,34 @@ public class OrderUseCase implements IOrderServicePort {
     @Override
     public void assignOrder(Long idOrder) {
         Order order = orderPersistencePort.getOrder(idOrder);
+        String oldStatus = order.getStatus().name();
         Long idRestaurantOfEmployee = authUtil.getCurrentEmployeeRestaurantId();
         authUtil.checkEmployeeOfRestaurant(order.getIdRestaurant(), idRestaurantOfEmployee);
         Long currentEmployeeId = authUtil.getCurrentUserId();
         order.setIdChef(currentEmployeeId);
         order.setStatus(OrderStatus.IN_PREPARATION);
+        traceClient.trace(order, oldStatus, authUtil.getCurrentUserToken());
         orderPersistencePort.saveOrder(order);
     }
 
     @Override
     public void orderReady(Long idOrder) {
         Order order = orderPersistencePort.getOrder(idOrder);
+        String oldStatus = order.getStatus().name();
         Long idRestaurantOfEmployee = authUtil.getCurrentEmployeeRestaurantId();
         authUtil.checkEmployeeOfRestaurant(order.getIdRestaurant(), idRestaurantOfEmployee);
         order.setStatus(OrderStatus.READY);
         String code = codeGeneratorUtil.generateCode();
         order.setSecurityCode(code);
         smsClient.sendSms(order.getPhoneClient(), code, authUtil.getCurrentUserToken());
+        traceClient.trace(order, oldStatus, authUtil.getCurrentUserToken());
         orderPersistencePort.saveOrder(order);
     }
 
     @Override
     public void deliverOrder(Long idOrder, String securityCode) {
         Order order = orderPersistencePort.getOrder(idOrder);
+        String oldStatus = order.getStatus().name();
         Long idRestaurantOfEmployee = authUtil.getCurrentEmployeeRestaurantId();
         authUtil.checkEmployeeOfRestaurant(order.getIdRestaurant(), idRestaurantOfEmployee);
         if (order.getStatus() != OrderStatus.READY) {
@@ -82,6 +90,7 @@ public class OrderUseCase implements IOrderServicePort {
             throw new InvalidSecurityCodeException();
         }
         order.setStatus(OrderStatus.DELIVERED);
+        traceClient.trace(order, oldStatus, authUtil.getCurrentUserToken());
         orderPersistencePort.saveOrder(order);
     }
 
@@ -96,11 +105,13 @@ public class OrderUseCase implements IOrderServicePort {
     @Override
     public void cancelOrder(Long idOrder) {
         Order order = orderPersistencePort.getOrder(idOrder);
+        String oldStatus = order.getStatus().name();
         authUtil.checkClientOfOrder(order);
         if (order.getStatus() != OrderStatus.PENDING) {
             throw new OrderNotPendingException(order.getStatus().name());
         }
         order.setStatus(OrderStatus.CANCELLED);
+        traceClient.trace(order, oldStatus, authUtil.getCurrentUserToken());
         orderPersistencePort.saveOrder(order);
     }
 }

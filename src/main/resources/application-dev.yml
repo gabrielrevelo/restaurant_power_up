@@ -22,3 +22,4 @@ management:
 app:
   userMicroUrlBase: "http://localhost:8080/"
   smsMicroUrlBase: "http://localhost:8082/"
+  traceMicroUrlBase: "http://localhost:8083/"

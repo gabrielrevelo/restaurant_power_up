@@ -10,6 +10,8 @@ import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.mappe
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.jpa.mysql.repositories.*;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.smsclient.adapter.SmsApiClient;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.smsclient.adapter.SmsClient;
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.tarceadapter.adapter.TraceApiClient;
+import com.pragma.powerup.restaurantmicroservice.adapters.driven.tarceadapter.adapter.TraceClient;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.userclient.adapter.UserApiClient;
 import com.pragma.powerup.restaurantmicroservice.adapters.driven.userclient.adapter.UserClient;
 import com.pragma.powerup.restaurantmicroservice.adapters.driving.http.HttpCurrentUserProvider;
@@ -41,11 +43,13 @@ public class BeanConfiguration {
     private final IOrderEntityMapper orderEntityMapper;
     private final UserApiClient userApiClient;
     private final SmsApiClient smsApiClient;
-    @Bean
-    public CodeGeneratorUtil codeGeneratorUtil() {
-        return new CodeGeneratorUtil();
-    }
 
+    private final TraceApiClient traceApiClient;
+    @Bean
+    public SecurityCodeGenerator securityCodeGenerator() {
+        return new SecurityCodeGenerator();
+    }
+  
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort() {
         return new RestaurantMysqlAdapter(restaurantRepository, restaurantEntityMapper);
@@ -64,6 +68,11 @@ public class BeanConfiguration {
     @Bean
     public ISmsClient smsClient() {
         return new SmsClient(smsApiClient);
+    }
+
+    @Bean
+    public ITraceClient traceClient() {
+        return new TraceClient(traceApiClient);
     }
 
     @Bean
@@ -93,7 +102,7 @@ public class BeanConfiguration {
 
     @Bean
     public IOrderServicePort orderServicePort() {
-        return new OrderUseCase(orderPersistencePort(), smsClient(), authUtil(), codeGeneratorUtil());
+        return new OrderUseCase(orderPersistencePort(), smsClient(), traceClient(), authorizationUtil(), securityCodeGenerator());
     }
 
     @Bean
